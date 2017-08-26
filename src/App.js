@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
+import axios from 'axios';
 import './App.css';
 import CCC from './utils/ccc-streamer-utilities.js';
 
@@ -8,8 +9,45 @@ class App extends Component {
     super(props);
     this.state = {
       current: {},
+      historical: {},
       recent: {},
+      currencies:{
+        fromCur: ["BTC", "ETH"],
+        toCur: ["USD"]
+      }
     };
+    this.fetchHistoricalData();
+  }
+
+  fetchHistoricalData(){
+    let currencies = this.state.currencies;
+    let currencyConversions = [];
+    currencies.fromCur.forEach((f_cur) => {
+      currencies.toCur.forEach((t_cur) => {
+        currencyConversions.push([f_cur, t_cur]);
+      });
+    });
+    currencyConversions.forEach(currencyPair => {
+      this.queryCryptoCompareHistoryData(`fsym=${currencyPair[0]}&tsym=${currencyPair[1]}`)
+        .then(response => {
+          if(response.status === 200){
+            let historical = this.state.historical;
+            historical[`${currencyPair[0]}-${currencyPair[1]}`] = response.data.Data;
+            this.setState({historical});
+          }
+        })
+        .catch(error => {
+          console.log('error for', currencyPair[0], currencyPair[1], error);
+        });
+    });
+
+  }
+
+  queryCryptoCompareHistoryData(currencyPair){
+    const apiCall = `https://min-api.cryptocompare.com/data/histoday?${currencyPair}&limit=60&aggregate=3&e=CCCAGG`;
+    return axios.get(apiCall)
+      .then(response => response )
+      .catch(error => { throw error });
   }
 
   componentWillMount(){
