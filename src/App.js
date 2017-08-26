@@ -8,11 +8,13 @@ class App extends Component {
     super(props);
     this.state = {
       current: {},
+      recent: {},
     };
   }
 
   componentWillMount(){
     let current = this.state.current;
+    let recent = this.state.recent;
 
     // instantiate socket
     const socket = io.connect('https://streamer.cryptocompare.com/');
@@ -30,8 +32,12 @@ class App extends Component {
         if (res.PRICE) {
           Object.keys(res).forEach(detail => console.log(detail, JSON.stringify(res[detail])))
           current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = res;
+          if (recent[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] === undefined) {
+            recent[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = [];
+          }
+          recent[`${res.FROMSYMBOL}-${res.TOSYMBOL}`].push([res.LASTUPDATE, res.PRICE]);
         }
-        this.setState({current});
+        this.setState({current, recent});
       }
     });
   }
