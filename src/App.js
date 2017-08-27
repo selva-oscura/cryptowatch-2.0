@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import io from 'socket.io-client';
 import axios from 'axios';
-import './App.css';
+import io from 'socket.io-client';
 import CCC from './utils/ccc-streamer-utilities.js';
+import LineGraph from './LineGraph';
+import './App.css';
 
 class App extends Component {
   constructor(props) {
@@ -79,10 +80,12 @@ class App extends Component {
       }
     });
   }
+
   render() {
     return (
       <div className="App">
         <div className="App-header">
+          <LineGraph />
         </div>
       </div>
     );
