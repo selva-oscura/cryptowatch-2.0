@@ -68,20 +68,30 @@ class App extends Component {
       let res = {};
       if (messageType === CCC.STATIC.TYPE.CURRENTAGG) {
         res = CCC.CURRENT.unpack(message);
-        if (res.PRICE) {
-          Object.keys(res).forEach(detail => console.log(detail, JSON.stringify(res[detail])))
-          current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = res;
+
+        // update if provided data has all needed fields
+        if(res.LASTUPDATE && res.PRICE && res.FROMSYMBOL && res.TOSYMBOL){
+
+          // instantiate array for each currency pair in state.recent the first time data is received for that currency
           if (recent[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] === undefined) {
             recent[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = [];
           }
+          // only update state.current if there is a change in price (or if this is first current data received)
+          if(this.state.recent[`${res.FROMSYMBOL}-${res.TOSYMBOL}`].length === 0 || res.PRICE !== this.state.current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`].PRICE){
+              current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = res;
+          }
+          // always add newest time & price data to state.recent
           recent[`${res.FROMSYMBOL}-${res.TOSYMBOL}`].push([res.LASTUPDATE, res.PRICE]);
+
+          this.setState({current, recent});
         }
-        this.setState({current, recent});
       }
     });
   }
 
   render() {
+    let currentData = Object.keys(this.state.current);
+    let recentData = Object.keys(this.state.recent);
     return (
       <div className="App">
         <div className="App-header">
