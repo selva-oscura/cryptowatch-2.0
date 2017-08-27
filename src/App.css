@@ -2,13 +2,43 @@
   text-align: center;
   min-height: 100vh;
   background-color: #222;
-  height: 50px;
-  color: white;
+  color: #ccc;
 }
+
+.wrapper{
+  width: 100%;
+}
+@media (min-width: 900px) {
+  .wrapper {
+    width: 90%;
+    margin: 0 auto;
+  }
+}
+@media (min-width: 1200px) {
+  .wrapper {
+    width: 80%;
+    margin: 0 auto;
+  }
+}
+
 
 .App-header {
+  height: 50px;
+  padding: 4px;
 }
 
-.App-intro {
-  font-size: large;
+.App-body{
+
+}
+
+@media (min-width: 900px) {
+  .m-half {
+    width: 49%;
+    min-height: calc(100vh - 50px);
+  }
+}
+@media (max-width: 799px) {
+  .s-all{
+    width: 100%;
+  }
 }

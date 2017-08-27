@@ -94,9 +94,23 @@ class App extends Component {
     let recentData = Object.keys(this.state.recent);
     return (
       <div className="App">
-        <div className="App-header">
-          <LineGraph />
-        </div>
+        <div className="wrapper">
+
+          <div className="App-header">
+            <h2>CryptoCurrency Quotes</h2>
+          </div>
+
+          <div className="App-body">
+            <div className="m-half s-all">
+              current data
+            </div>
+            <div className="m-half s-all">
+              line graph
+              <LineGraph />
+            </div>
+          </div>{/* end of App-body */}
+
+        </div>{/* end of wrapper */}
       </div>
     );
   }
