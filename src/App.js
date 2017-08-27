@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
 import CCC from './utils/ccc-streamer-utilities.js';
+import CurrentQuote from './CurrentQuote';
 import LineGraph from './LineGraph';
 import './App.css';
 
@@ -102,11 +103,25 @@ class App extends Component {
 
           <div className="App-body">
             <div className="m-half s-all">
-              current data
+              {
+                currentData.map((current, i) => (
+                  <CurrentQuote
+                    key={i}
+                    current={this.state.current[current]}
+                    yesterday={this.state.historical[current]}
+                  />
+                ))
+              }
             </div>
             <div className="m-half s-all">
-              line graph
-              <LineGraph />
+              {
+                recentData.map((currencyPair, i) => (
+                  <LineGraph
+                    key={i}
+                    data={this.state.recent[currencyPair]}
+                  />
+                ))
+              }
             </div>
           </div>{/* end of App-body */}
 
