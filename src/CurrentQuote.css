@@ -1,6 +1,7 @@
 .CurrentQuote {
 	width: 90%;
 	margin: 12px auto;
+	padding: 24px 12px;
 	border: 1px solid #666;
 }
 
