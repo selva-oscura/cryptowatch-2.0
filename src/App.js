@@ -110,7 +110,12 @@ class App extends Component {
           </div>
 
           <div className="App-body">
-            <Currencies />
+            
+            <Currencies 
+              selectedFromCurrencies={this.state.currencies.fromCur}
+              selectedToCurrencies={this.state.currencies.toCur}
+            />
+
             <div className="m-half s-all">
               {
                 currentData.map((current, i) => (
@@ -122,6 +127,7 @@ class App extends Component {
                 ))
               }
             </div>
+
             <div className="m-half s-all LineGraphs">
               {
                 historicalData.map((currencyPair, i) => (
