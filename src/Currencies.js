@@ -1,4 +1,5 @@
 import React from 'react';
+import CurrencyButton from './CurrencyButton';
 
 const Currencies = () => {
 	const fromCurrencies = [
@@ -28,7 +29,12 @@ const Currencies = () => {
 			<div>
 				<h3>Crypto-Currencies:</h3>
 				<div className="currency-list">
-
+					{fromCurrencies.map((currency, i) => (
+						<CurrencyButton
+							key={i}
+							currency={currency}
+						/>
+					))}
 				</div>
 			</div>
 			<div>
@@ -37,7 +43,12 @@ const Currencies = () => {
 					(price in terms of these currencies)
 				</h3>
 				<div className="currency-list">
-
+					{toCurrencies.map((currency, i) => (
+						<CurrencyButton
+							key={i}
+							currency={currency}
+						/>
+					))}
 				</div>
 			</div>
 		</div>
