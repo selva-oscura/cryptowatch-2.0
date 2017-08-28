@@ -24,7 +24,22 @@ const Currencies = () => {
 	];
 	return (
 		<div>
-			<p>Currencies here</p>
+			<h2>Select Currencies:</h2>
+			<div>
+				<h3>Crypto-Currencies:</h3>
+				<div className="currency-list">
+
+				</div>
+			</div>
+			<div>
+				<h3>
+					Base Currencies:<br />
+					(price in terms of these currencies)
+				</h3>
+				<div className="currency-list">
+
+				</div>
+			</div>
 		</div>
 	);
 };
