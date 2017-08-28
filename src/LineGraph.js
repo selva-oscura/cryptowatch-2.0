@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
+import CCC from './utils/ccc-streamer-utilities.js';
 import './LineGraph.css';
 
-const LineGraph = () => {
-  // let data = [[0, 12], [89, 9], [12, 50]];
-  let data = [[0, 12], [6, 9], [12, 50], [18, 500]];
+const LineGraph = ({currencyPair, data}) => {
+  let min, max, numDays, currencySign;
+  min = Infinity;
+  max = -Infinity;
+  data.forEach(point => {
+    min = Math.min(min, point[1]);
+    max = Math.max(max, point[1]);
+  });
+  numDays = (data[data.length-1][0] - data[0][0])/(24*60*60);
+  currencySign = CCC.STATIC.CURRENCY.SYMBOL[currencyPair.slice(-3)];
   data = data.map(point => ([point[0], -point[1]]));
-  console.log('data', data);
+
   let xScale = d3.scaleLinear()
   .domain(d3.extent(data, ([x, y]) => x))
   .range([0, 400]);
@@ -20,10 +28,16 @@ const LineGraph = () => {
   .y(([x, y]) => yScale(y))
   return (
     <div className="LineGraph">
-      <p className="caption">ETH</p>
-      <svg width="400" height="200">
-          <path style={{stroke: "grey", fill:"none"}}d={line(data)}></path>
-      </svg>
+      <div className="container">
+        <div className="caption">
+          <p className="quote-normal">{currencyPair.slice(0,3)}</p>
+          <p className="quote-tiny">last {numDays} days</p>
+          <p className="quote-tiny">{currencySign}{min.toFixed(2)} - {currencySign}{max.toFixed(2)}</p>
+        </div>
+        <svg width="100%" viewBox="0 0 400 200" preserveAspectRatio="none">
+            <path style={{stroke: "grey", fill:"none"}}d={line(data)}></path>
+        </svg>
+      </div>
     </div>
   );
 }
