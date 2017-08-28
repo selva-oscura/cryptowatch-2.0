@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
 import CCC from './utils/ccc-streamer-utilities.js';
+import Currencies from './Currencies';
 import CurrentQuote from './CurrentQuote';
 import LineGraph from './LineGraph';
 import './App.css';
@@ -109,6 +110,7 @@ class App extends Component {
           </div>
 
           <div className="App-body">
+            <Currencies />
             <div className="m-half s-all">
               {
                 currentData.map((current, i) => (
