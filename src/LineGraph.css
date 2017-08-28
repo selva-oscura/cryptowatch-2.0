@@ -1,20 +1,30 @@
 .LineGraph {
-	max-width: 400px;
+	margin: 12px auto 18px;
+	display: block;
+	flex-grow: 1;
+	width: 90%;
 	margin: 12px auto;
+}
+
+.container{
 	position: relative;
+	height: 220px;
+	max-height: 220px;
+	border: 1px solid #666;
 }
 
 .LineGraph .caption, .LineGraph svg {
 	position: absolute;
+	max-height: 200px;
 	top: 0;
 }
 
 .LineGraph .caption {
-	left: 24px;
-	font-size: 24px;
+	top: 12px;
+	left: 12px;
 }
 
 .LineGraph svg {
+	top: 10px;
 	left: 0;
-	border: 1px solid #666;
 }
