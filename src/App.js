@@ -93,6 +93,13 @@ class App extends Component {
   render() {
     let currentData = Object.keys(this.state.current);
     let recentData = Object.keys(this.state.recent);
+    let historicalData = Object.keys(this.state.historical);
+    let historicalCloseData = {};
+    historicalData.forEach(currency => {
+      historicalCloseData[`${currency}`] = this.state.historical[`${currency}`].map(point => {
+        return [point.time, point.close]
+      })
+    });
     return (
       <div className="App">
         <div className="wrapper">
@@ -113,12 +120,13 @@ class App extends Component {
                 ))
               }
             </div>
-            <div className="m-half s-all">
+            <div className="m-half s-all LineGraphs">
               {
-                recentData.map((currencyPair, i) => (
+                historicalData.map((currencyPair, i) => (
                   <LineGraph
                     key={i}
-                    data={this.state.recent[currencyPair]}
+                    currencyPair={currencyPair}
+                    data={historicalCloseData[currencyPair]}
                   />
                 ))
               }
@@ -132,3 +140,5 @@ class App extends Component {
 }
 
 export default App;
+
+              // <LineGraph />
