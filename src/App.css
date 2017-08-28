@@ -2,7 +2,7 @@
   text-align: center;
   min-height: 100vh;
   background-color: #222;
-  color: #ccc;
+  color: #bbb;
 }
 
 .wrapper{
@@ -27,14 +27,28 @@
   padding: 4px;
 }
 
-.App-body{
+.quote-normal {
+  font-size: 24px;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
 
+.quote-tiny {
+  font-size: 16px;
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+.LineGraphs {
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 900px) {
   .m-half {
     width: 49%;
-    min-height: calc(100vh - 50px);
+    min-height: calc(100vh - 80px);
     display: inline-block;
     vertical-align: top;
   }
@@ -42,5 +56,14 @@
 @media (max-width: 799px) {
   .s-all{
     width: 100%;
+  }
+}
+
+@media (max-width: 450px) {
+  .quote-normal {
+    font-size: 18px;
+  }
+  .quote-tiny {
+    font-size: 12px;
   }
 }

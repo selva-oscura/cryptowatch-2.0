@@ -4,19 +4,6 @@
 	border: 1px solid #666;
 }
 
-.CurrentQuote .quote-normal {
-	font-size: 24px;
-	margin-bottom: 0px;
-	padding-bottom: 0px;
-}
-
-.CurrentQuote .quote-tiny {
-	font-size: 16px;
-	margin-top: 0px;
-	padding-top: 0px;
-}
-
-
 .third {
 	width: 33%;
 	display: inline-block;
@@ -77,13 +64,7 @@
 }
 
 @media (max-width: 450px) {
-	.CurrentQuote .quote-normal {
-		font-size: 18px;
-	}
-	.CurrentQuote .quote-tiny {
-		font-size: 12px;
-	}
-	.up-arrow, .down-arrow{
-		font-size: 27px;
-	}
+  .up-arrow, .down-arrow{
+    font-size: 27px;
+  }
 }
