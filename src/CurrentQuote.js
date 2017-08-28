@@ -17,7 +17,7 @@ const CurrentQuote = ({current, yesterday}) => {
 		priceChange = (100 * ((current.PRICE - yesterdayClose) / yesterdayClose)).toFixed(2); 
 		if (priceChange > 0) {
 			priceDir = "up";
-		} else if (priceChange<0) {
+		} else if (priceChange < 0) {
 			priceDir = "down";
 		}
 		priceChange = Math.abs(priceChange) + "%";
@@ -37,7 +37,7 @@ const CurrentQuote = ({current, yesterday}) => {
 			</div>
 			<div className="third">
 				<p className={`quote-normal ${priceDir}`}>
-					<div className={`${priceDir}-arrow`}>&lsaquo;</div>
+					<span className={`${priceDir}-arrow`}>&lsaquo;</span>
 					&nbsp;&nbsp;
 					{priceChange}
 				</p>
