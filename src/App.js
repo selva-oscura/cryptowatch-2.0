@@ -20,6 +20,7 @@ class App extends Component {
       }
     };
     this.fetchHistoricalData();
+    this.updateCurrencies = this.updateCurrencies.bind(this);
   }
 
   fetchHistoricalData(){
@@ -44,6 +45,18 @@ class App extends Component {
         });
     });
 
+  }
+
+  updateCurrencies(clickedCurrency, fromOrTo){
+    let currencies = this.state.currencies;
+    if (currencies[fromOrTo].includes(clickedCurrency)) {
+      currencies[fromOrTo] = currencies[fromOrTo].filter(item => {
+        return item !== clickedCurrency ? item : null;
+      });
+    } else {
+      currencies[fromOrTo].push(clickedCurrency);
+    }
+    this.setState({currencies});
   }
 
   queryCryptoCompareHistoryData(currencyPair){
@@ -114,6 +127,7 @@ class App extends Component {
             <Currencies 
               selectedFromCurrencies={this.state.currencies.fromCur}
               selectedToCurrencies={this.state.currencies.toCur}
+              updateCurrencies={this.updateCurrencies}
             />
 
             <div className="m-half s-all">
