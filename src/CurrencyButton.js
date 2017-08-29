@@ -1,4 +1,5 @@
 import React from 'react';
+import './CurrencyButton.css';
 
 const CurrencyButton = ({currency, selected}) => {
 	let keys = Object.keys(currency);
