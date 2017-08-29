@@ -34,6 +34,7 @@ const Currencies = ({selectedFromCurrencies, selectedToCurrencies}) => {
 							key={i}
 							currency={currency}
 							selected={selectedFromCurrencies}
+							fromOrTo="fromCur"
 						/>
 					))}
 				</div>
@@ -49,6 +50,7 @@ const Currencies = ({selectedFromCurrencies, selectedToCurrencies}) => {
 							key={i}
 							currency={currency}
 							selected={selectedToCurrencies}
+							fromOrTo="toCur"
 						/>
 					))}
 				</div>
