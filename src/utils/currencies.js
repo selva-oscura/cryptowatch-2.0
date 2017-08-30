@@ -36,7 +36,12 @@ const fromCurrencies = [
     toCurrencies = [
       {"USD":   "US Dollar"},
       {"EUR":   "Euro"},
-      {"GBP":   "British Pound"}
+      {"GBP":   "British Pound"},
+      {"CNY":   "Chinese Yuan"},
+      {"JPY":   "Japanese Yen"},
+      {"RUB":   "Russian Ruble"},
+      {"INR":   "Indian Rupee"},
+      {"BRL":   "Brazilian Real"},
     ],
     pairingOrder = [];
 
