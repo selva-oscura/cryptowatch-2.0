@@ -52,7 +52,9 @@ class App extends Component {
             && selectedCurrencies.toCur.includes(toCur)
             && historical[`${item}`] !== undefined) {
             return item;
-          }
+          } else {
+            return null
+          };
         });
         this.setState({historical, selectedCurrencies});
       }
@@ -185,8 +187,7 @@ class App extends Component {
 
   render() {
     let {current, historical, selectedCurrencies} = this.state;
-    let currentKeys = Object.keys(current),
-        historicalKeys = Object.keys(historical),
+    let historicalKeys = Object.keys(historical),
         historicalCloseData = {};
     historicalKeys.forEach(currencyPair => {
       historicalCloseData[`${currencyPair}`] = historical[`${currencyPair}`].map(point => ([point.time, point.close]))
