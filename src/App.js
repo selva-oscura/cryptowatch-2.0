@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import allCurrencies from './utils/currencies.js';
 import axios from 'axios';
 import io from 'socket.io-client';
 import CCC from './utils/ccc-streamer-utilities.js';
@@ -14,49 +15,71 @@ class App extends Component {
       current: {},
       historical: {},
       recent: {},
-      currencies:{
+      selectedCurrencies: {
         fromCur: ["BTC", "ETH"],
-        toCur: ["USD"]
-      }
+        toCur: ["USD"],
+        display: [],
+      },
+      allCurrencies
     };
-    this.fetchHistoricalData();
-    this.updateCurrencies = this.updateCurrencies.bind(this);
+    this.updateSelectedCurrencies = this.updateSelectedCurrencies.bind(this);
   }
 
-  fetchHistoricalData(){
-    let currencies = this.state.currencies;
-    let currencyConversions = [];
-    currencies.fromCur.forEach((f_cur) => {
-      currencies.toCur.forEach((t_cur) => {
-        currencyConversions.push([f_cur, t_cur]);
+  bootStrapHistoricalData(){
+    let selectedCurrencies = this.state.selectedCurrencies;
+    selectedCurrencies.fromCur.forEach((f_cur) => {
+      selectedCurrencies.toCur.forEach((t_cur) => {
+        this.fetchHistoricalData(f_cur, t_cur);
       });
     });
-    currencyConversions.forEach(currencyPair => {
-      this.queryCryptoCompareHistoryData(`fsym=${currencyPair[0]}&tsym=${currencyPair[1]}`)
-        .then(response => {
-          if(response.status === 200){
-            let historical = this.state.historical;
-            historical[`${currencyPair[0]}-${currencyPair[1]}`] = response.data.Data;
-            this.setState({historical});
-          }
-        })
-        .catch(error => {
-          console.log('error for', currencyPair[0], currencyPair[1], error);
-        });
-    });
-
   }
 
-  updateCurrencies(clickedCurrency, fromOrTo){
-    let currencies = this.state.currencies;
-    if (currencies[fromOrTo].includes(clickedCurrency)) {
-      currencies[fromOrTo] = currencies[fromOrTo].filter(item => {
+  fetchHistoricalData(f_cur, t_cur){
+    this.queryCryptoCompareHistoryData(`fsym=${f_cur}&tsym=${t_cur}`)
+    .then(response => {
+      if(response.status === 200){
+        let { selectedCurrencies, historical, allCurrencies } = this.state;
+        historical[`${f_cur}-${t_cur}`] = response.data.Data;
+        selectedCurrencies.display = allCurrencies.pairingOrder.filter((item) => {
+          let divider = item.indexOf('-'),
+              fromCur = item.slice(0,divider),
+              toCur = item.slice(divider+1);
+          if (selectedCurrencies.fromCur.includes(fromCur)
+            && selectedCurrencies.toCur.includes(toCur)
+            && historical[`${item}`] !== undefined) {
+            return item;
+          }
+        });
+        this.setState({historical, selectedCurrencies});
+      }
+    })
+    .catch(error => {
+      console.log('error for', f_cur, t_cur, error);
+    });
+  }
+
+  updateSelectedCurrencies(clickedCurrency, fromOrTo){
+    let selectedCurrencies = this.state.selectedCurrencies;
+    if (selectedCurrencies[fromOrTo].includes(clickedCurrency)) {
+      selectedCurrencies[fromOrTo] = selectedCurrencies[fromOrTo].filter(item => {
         return item !== clickedCurrency ? item : null;
       });
+      selectedCurrencies.display = selectedCurrencies.display.filter((item) => {
+        return item.includes(clickedCurrency) ? null : item;
+      });
     } else {
-      currencies[fromOrTo].push(clickedCurrency);
+      selectedCurrencies[fromOrTo].push(clickedCurrency);
+      if(fromOrTo==="fromCur"){
+        selectedCurrencies.toCur.forEach(t_cur => {
+          this.fetchHistoricalData(clickedCurrency, t_cur);
+        });
+      } else {
+        selectedCurrencies.fromCur.forEach(f_cur => {
+          this.fetchHistoricalData(f_cur, clickedCurrency);
+        });
+      }
     }
-    this.setState({currencies});
+    this.setState({selectedCurrencies});
   }
 
   queryCryptoCompareHistoryData(currencyPair){
@@ -67,8 +90,9 @@ class App extends Component {
   }
 
   componentWillMount(){
-    let current = this.state.current;
-    let recent = this.state.recent;
+    let { current, recent, selectedCurrencies, allCurrencies } = this.state;
+
+    this.bootStrapHistoricalData();
 
     // instantiate socket
     const socket = io.connect('https://streamer.cryptocompare.com/');
@@ -105,14 +129,11 @@ class App extends Component {
   }
 
   render() {
-    let currentData = Object.keys(this.state.current);
-    let recentData = Object.keys(this.state.recent);
-    let historicalData = Object.keys(this.state.historical);
-    let historicalCloseData = {};
+    let currentData = Object.keys(this.state.current),
+        historicalData = Object.keys(this.state.historical),
+        historicalCloseData = {};
     historicalData.forEach(currency => {
-      historicalCloseData[`${currency}`] = this.state.historical[`${currency}`].map(point => {
-        return [point.time, point.close]
-      })
+      historicalCloseData[`${currency}`] = this.state.historical[`${currency}`].map(point => ([point.time, point.close]))
     });
     return (
       <div className="App">
@@ -125,9 +146,9 @@ class App extends Component {
           <div className="App-body">
             
             <Currencies 
-              selectedFromCurrencies={this.state.currencies.fromCur}
-              selectedToCurrencies={this.state.currencies.toCur}
-              updateCurrencies={this.updateCurrencies}
+              selectedFromCurrencies={this.state.selectedCurrencies.fromCur}
+              selectedToCurrencies={this.state.selectedCurrencies.toCur}
+              updateSelectedCurrencies={this.updateSelectedCurrencies}
             />
 
             <div className="m-half s-all">
@@ -144,7 +165,7 @@ class App extends Component {
 
             <div className="m-half s-all LineGraphs">
               {
-                historicalData.map((currencyPair, i) => (
+                this.state.selectedCurrencies.display.map((currencyPair, i) => (
                   <LineGraph
                     key={i}
                     currencyPair={currencyPair}
@@ -162,5 +183,3 @@ class App extends Component {
 }
 
 export default App;
-
-              // <LineGraph />
