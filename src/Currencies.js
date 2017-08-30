@@ -1,7 +1,7 @@
 import React from 'react';
 import CurrencyButton from './CurrencyButton';
 
-const Currencies = ({selectedFromCurrencies, selectedToCurrencies, updateCurrencies}) => {
+const Currencies = ({selectedFromCurrencies, selectedToCurrencies, updateSelectedCurrencies}) => {
 	const fromCurrencies = [
 		{"BTC":  	"Bitcoin"},
 		{"ETH": 	"Ethereum"},
@@ -35,7 +35,7 @@ const Currencies = ({selectedFromCurrencies, selectedToCurrencies, updateCurrenc
 							currency={currency}
 							selected={selectedFromCurrencies}
 							fromOrTo="fromCur"
-							updateCurrencies={updateCurrencies}
+							updateSelectedCurrencies={updateSelectedCurrencies}
 						/>
 					))}
 				</div>
@@ -52,7 +52,7 @@ const Currencies = ({selectedFromCurrencies, selectedToCurrencies, updateCurrenc
 							currency={currency}
 							selected={selectedToCurrencies}
 							fromOrTo="toCur"
-							updateCurrencies={updateCurrencies}
+							updateSelectedCurrencies={updateSelectedCurrencies}
 						/>
 					))}
 				</div>
