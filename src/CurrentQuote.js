@@ -1,17 +1,12 @@
 import React from 'react';
 import CCC from './utils/ccc-streamer-utilities.js';
+import { currencyAbbreviations } from './utils/currencies.js';
 import './CurrentQuote.css';
 
 const CurrentQuote = ({current, yesterday}) => {
 	let yesterdayClose, priceChange;
 	let priceDir = "no-change";
-	const currencies = {
-		"USD" : "US Dollar",
-		"EUR" : "Euros",
-		"BTC" : "BitCoin",
-		"ETH" : "Ethereum",
-	}
-	const fromCurrency = currencies[current.FROMSYMBOL] || "flesh out currency list!";
+	const fromCurrency = currencyAbbreviations.fromCurrencies[current.FROMSYMBOL] || "flesh out currency list!";
 	if (yesterday) {
 		yesterdayClose = yesterday[yesterday.length-1].close;
 		priceChange = (100 * ((current.PRICE - yesterdayClose) / yesterdayClose)).toFixed(2); 
