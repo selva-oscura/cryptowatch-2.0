@@ -134,8 +134,8 @@ class App extends Component {
     let currentKeys = Object.keys(current),
         historicalKeys = Object.keys(historical),
         historicalCloseData = {};
-    historicalKeys.forEach(currency => {
-      historicalCloseData[`${currency}`] = historical[`${currency}`].map(point => ([point.time, point.close]))
+    historicalKeys.forEach(currencyPair => {
+      historicalCloseData[`${currencyPair}`] = historical[`${currencyPair}`].map(point => ([point.time, point.close]))
     });
     return (
       <div className="App">
