@@ -1,6 +1,23 @@
 {
   "name": "cryptowatch-2.0",
   "version": "0.1.0",
+  "description": "cryptowat.ch clone",
+  "homepage": "http://selva-oscura.github.io/cryptowatch-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/selva-oscura/cryptowatch-2.0.git"
+  },
+  "keywords": [
+    "JS",
+    "React",
+    "axios",
+    "d3",
+    "socket.io"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/selva-oscura/cryptowatch-2.0/issues"
+  },
   "private": true,
   "dependencies": {
     "axios": "^0.16.2",
@@ -10,10 +27,14 @@
     "react-scripts": "1.0.11",
     "socket.io": "^2.0.3"
   },
+  "devDependencies": {
+    "gh-pages": "^1.0.0"
+  },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && cp manifest.json build/ && sw-precache --root='build/' --static-file-globs='build/**/!(*map*)'",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy" : "npm run build&&gh-pages -d build"
   }
 }
