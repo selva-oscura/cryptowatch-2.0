@@ -1,3 +1,5 @@
+/* eslint no-useless-escape: 0 */  // --> OFF
+
 var CCC = {};
 
 CCC.STATIC=CCC.STATIC || {};
