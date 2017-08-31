@@ -167,7 +167,7 @@ class App extends Component {
         <div className="wrapper">
 
           <div className="App-header">
-            <h2>CryptoCurrency Quotes</h2>
+            <h2>CryptoGlance</h2>
           </div>
 
           <div className="App-body">
