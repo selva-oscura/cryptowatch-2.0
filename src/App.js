@@ -18,8 +18,7 @@ class App extends Component {
       selectedCurrencies: {
         fromCur: ["BTC", "ETH"],
         toCur: ["USD"],
-        displayCurrent: [],
-        displayHistorical: [],
+        display: [],
       },
       allCurrencies
     };
@@ -36,27 +35,27 @@ class App extends Component {
       });
     });
     this.subscribeToCurrentQuotes(subscriptions);
+    this.updateDisplayedCurrencyPairings();
+  }
+
+  updateDisplayedCurrencyPairings(){
+    let { selectedCurrencies, allCurrencies } = this.state;
+    selectedCurrencies.display = allCurrencies.pairingOrder.filter(item => {
+      let divider = item.indexOf('-'),
+          fromCur = item.slice(0,divider),
+          toCur = item.slice(divider+1);
+      return selectedCurrencies.fromCur.includes(fromCur) && selectedCurrencies.toCur.includes(toCur) ? item : null;
+    });
+    this.setState({ selectedCurrencies });
   }
 
   fetchHistoricalData(f_cur, t_cur){
     this.queryCryptoCompareHistoryData(`fsym=${f_cur}&tsym=${t_cur}`)
     .then(response => {
       if(response.status === 200){
-        let { selectedCurrencies, historical, allCurrencies } = this.state;
+        let { historical } = this.state;
         historical[`${f_cur}-${t_cur}`] = response.data.Data;
-        selectedCurrencies.displayHistorical = allCurrencies.pairingOrder.filter((item) => {
-          let divider = item.indexOf('-'),
-              fromCur = item.slice(0,divider),
-              toCur = item.slice(divider+1);
-          if (selectedCurrencies.fromCur.includes(fromCur)
-            && selectedCurrencies.toCur.includes(toCur)
-            && historical[`${item}`] !== undefined) {
-            return item;
-          } else {
-            return null
-          };
-        });
-        this.setState({historical, selectedCurrencies});
+        this.setState({historical});
       }
     })
     .catch(error => {
@@ -66,7 +65,7 @@ class App extends Component {
 
   subscribeToCurrentQuotes(subscriptions){
     // get current (current quotes object) in state
-    let { current, selectedCurrencies } = this.state;
+    let { current } = this.state;
 
     // instantiate socket
     const socket = io.connect('https://streamer.cryptocompare.com/');
@@ -89,46 +88,16 @@ class App extends Component {
             current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = res;
             this.setState({ current });
           }
-
-          // add currencyPair to selectedCurrencies.displayCurrent if this is the first time that current data has been received
-          if (current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] === undefined || !selectedCurrencies.displayCurrent.includes(`${res.FROMSYMBOL}-${res.TOSYMBOL}`)) {
-            selectedCurrencies.displayCurrent = allCurrencies.pairingOrder.filter((item) => {
-              let divider = item.indexOf('-'),
-                  fromCur = item.slice(0,divider),
-                  toCur = item.slice(divider+1);
-              if (selectedCurrencies.fromCur.includes(fromCur)
-                && selectedCurrencies.toCur.includes(toCur)
-                && (item === `${res.FROMSYMBOL}-${res.TOSYMBOL}`
-                  || current[item] !== undefined)) {
-                return item;
-              }
-            });
-            this.setState({ selectedCurrencies });
-          } 
         }
       }
     });
   }
 
   unsubscribeToCurrentQuotes(subscriptions){
-    // get current (current quotes object), selectedCurrencies, and allCurrencies in state
-    let { current, selectedCurrencies, allCurrencies } = this.state;
-
     // instantiate socket
     const socket = io.connect('https://streamer.cryptocompare.com/');
-
     // unsubscribe to current quotes
     socket.emit('SubRemove', {subs:subscriptions} );
-    selectedCurrencies.displayCurrent = allCurrencies.pairingOrder.filter((item) => {
-      let divider = item.indexOf('-'),
-          fromCur = item.slice(0,divider),
-          toCur = item.slice(divider+1);
-      if (selectedCurrencies.fromCur.includes(fromCur)
-        && selectedCurrencies.toCur.includes(toCur)) {
-        return item;
-      }
-    });
-    this.setState({current});
   }
 
   updateSelectedCurrencies(clickedCurrency, fromOrTo){
@@ -148,13 +117,9 @@ class App extends Component {
       selectedCurrencies[fromOrTo] = selectedCurrencies[fromOrTo].filter(item => {
         return item !== clickedCurrency ? item : null;
       });
-      selectedCurrencies.displayHistorical = selectedCurrencies.displayHistorical.filter((item) => {
+      selectedCurrencies.display = selectedCurrencies.display.filter((item) => {
         return item.includes(clickedCurrency) ? null : item;
       });
-      selectedCurrencies.displayCurrent = selectedCurrencies.displayCurrent.filter((item) => {
-        return item.includes(clickedCurrency) ? null : item;
-      });
-
       this.setState({selectedCurrencies});
     } else {
       selectedCurrencies[fromOrTo].push(clickedCurrency);
@@ -169,8 +134,12 @@ class App extends Component {
           subscriptions.push(`5~CCCAGG~${f_cur}~${clickedCurrency}`);
         });
       }
+      selectedCurrencies.display = selectedCurrencies.display.filter((item) => {
+        return item.includes(clickedCurrency) ? null : item;
+      });
       this.setState({selectedCurrencies});
       this.subscribeToCurrentQuotes(subscriptions);
+      this.updateDisplayedCurrencyPairings();
     }
   }
 
@@ -211,8 +180,8 @@ class App extends Component {
 
             <div className="m-half s-all">
               {
-                selectedCurrencies.displayCurrent.map((currencyPair, i) => (
-                  <CurrentQuote
+                selectedCurrencies.display.map((currencyPair, i) => (
+                  current[currencyPair] && <CurrentQuote
                     key={i}
                     current={current[currencyPair]}
                     yesterday={historical[currencyPair]}
@@ -223,8 +192,8 @@ class App extends Component {
 
             <div className="m-half s-all LineGraphs">
               {
-                selectedCurrencies.displayHistorical.map((currencyPair, i) => (
-                  <LineGraph
+                selectedCurrencies.display.map((currencyPair, i) => (
+                  historical[currencyPair] && <LineGraph
                     key={i}
                     currencyPair={currencyPair}
                     data={historicalCloseData[currencyPair]}
