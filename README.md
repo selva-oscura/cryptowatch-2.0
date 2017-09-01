@@ -10,6 +10,10 @@ Graphs of the historical data were implemented with [D3.js](https://d3js.org/).
 
 (Neither Redux nor RX.js are actually used in the current version of the project, but may be added at a later point.)
 
+<p>See it live at <a href="https://selva-oscura.github.io/cryptowatch-2.0">online</a> or clone it and run it yourself.</p>
+
+![CryptoGlance](https://github.com/selva-oscura/cryptowatch-2.0/blob/master/cryptoglance_screenshot.png)
+
 To run locally (directions assume that you have already installed node (v.6+), npm or yarn, and git):
 * download or clone project (in terminal, type <code>git clone https://github.com/selva-oscura/cryptowatch-2.0.git</code>),
 * switch to project directory (in terminal, type <code>cd cryptowatch-2.0</code>),
