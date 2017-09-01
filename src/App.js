@@ -177,30 +177,31 @@ class App extends Component {
               selectedToCurrencies={selectedCurrencies.toCur}
               updateSelectedCurrencies={this.updateSelectedCurrencies}
             />
+            {
+              selectedCurrencies.display.map((currencyPair, i) => (
+                <div className="full">
+                  <div className="m-half s-full">
+                    {
+                      current[currencyPair] && <CurrentQuote
+                        key={i}
+                        current={current[currencyPair]}
+                        yesterday={historical[currencyPair]}
+                      />
+                    }
+                  </div>
 
-            <div className="m-half s-all">
-              {
-                selectedCurrencies.display.map((currencyPair, i) => (
-                  current[currencyPair] && <CurrentQuote
-                    key={i}
-                    current={current[currencyPair]}
-                    yesterday={historical[currencyPair]}
-                  />
-                ))
-              }
-            </div>
-
-            <div className="m-half s-all LineGraphs">
-              {
-                selectedCurrencies.display.map((currencyPair, i) => (
-                  historical[currencyPair] && <LineGraph
-                    key={i}
-                    currencyPair={currencyPair}
-                    data={historicalCloseData[currencyPair]}
-                  />
-                ))
-              }
-            </div>
+                  <div className="m-half s-full LineGraphs">
+                    {
+                      historical[currencyPair] && <LineGraph
+                        key={i}
+                        currencyPair={currencyPair}
+                        data={historicalCloseData[currencyPair]}
+                      />
+                  }
+                  </div>
+                </div>
+              ))
+            }
           </div>{/* end of App-body */}
 
         </div>{/* end of wrapper */}
