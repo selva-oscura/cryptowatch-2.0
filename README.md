@@ -1,4 +1,5 @@
-# CryptoGlance (jokingly referred to cryptowatch-2.0 when the project was started....  perhaps cryptowatch-0.2 would have been more apropos)
+# CryptoGlance 
+###(jokingly referred to cryptowatch-2.0 when the project was started....  perhaps cryptowatch-0.2 would have been more apropos)
 
 Inspired by the [cryptowat.ch](https://cryptowat.ch/) website, this hack night project was an excuse to play with React.js, APIs, web sockets, RX.js, and D3.js.  Project members included [Carol St. Louis](https://github.com/selva-oscura), [Neil](https://github.com/iccir919), and Swizec Teller ([website](https://swizec.com/), [github](https://github.com/Swizec)) who was an awesome mentor!
 
