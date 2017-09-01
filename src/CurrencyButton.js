@@ -8,11 +8,9 @@ const CurrencyButton = ({
   updateSelectedCurrencies,
 }) => {
   const keys = Object.keys(currency);
-
   const buttonClass = selected.includes(keys[0])
     ? 'currency-selected'
     : 'currency-unselected';
-
   const handleClick = () => {
     updateSelectedCurrencies(keys[0], fromOrTo);
   };
