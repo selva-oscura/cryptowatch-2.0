@@ -46,16 +46,22 @@
   flex-direction: column;
 }
 
+
+.full {
+  width: 100%;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
 @media (min-width: 900px) {
   .m-half {
     width: 49%;
-    min-height: calc(100vh - 80px);
     display: inline-block;
     vertical-align: top;
   }
 }
 @media (max-width: 799px) {
-  .s-all{
+  .s-full {
     width: 100%;
   }
 }
