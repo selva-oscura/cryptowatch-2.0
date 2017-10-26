@@ -188,7 +188,10 @@ class App extends Component {
               updateSelectedCurrencies={this.updateSelectedCurrencies}
             />
             {selectedCurrencies.display.map((currencyPair, i) => (
-              <div className="full">
+              <div
+                className="full"
+                key={selectedCurrencies.display[i]}
+              >
                 <div className="m-half s-full">
                   {current[currencyPair] && (
                     <CurrentQuote
