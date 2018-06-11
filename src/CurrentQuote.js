@@ -11,8 +11,10 @@ const CurrentQuote = ({ current, yesterday }) => {
     'flesh out currency list!';
   if (yesterday) {
     yesterdayClose = yesterday[yesterday.length - 1].close;
-    priceChange = (100 *
-      ((current.PRICE - yesterdayClose) / yesterdayClose)).toFixed(2);
+    priceChange = (
+      100 *
+      ((current.PRICE - yesterdayClose) / yesterdayClose)
+    ).toFixed(2);
     if (priceChange > 0) {
       priceDir = 'up';
     } else if (priceChange < 0) {
