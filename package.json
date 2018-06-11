@@ -20,16 +20,16 @@
   },
   "private": true,
   "dependencies": {
-    "axios": "^0.16.2",
-    "d3": "^4.10.0",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "react-scripts": "1.0.11",
-    "socket.io": "^2.0.3"
+    "axios": "^0.18.0",
+    "d3": "^5.4.0",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-scripts": "^1.1.4",
+    "socket.io": "^2.1.1"
   },
   "devDependencies": {
-    "gh-pages": "^1.0.0",
-    "prettier": "^1.6.1"
+    "gh-pages": "^1.2.0",
+    "prettier": "^1.13.5"
   },
   "scripts": {
     "start": "yarn run lint && react-scripts start",
