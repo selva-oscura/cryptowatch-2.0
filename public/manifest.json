@@ -3,8 +3,18 @@
   "name": "CryptoGlance",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "cryptoglance_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "cryptoglance_192x192.png",
       "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "cryptoglance_180x180.png",
+      "sizes": "180x180",
       "type": "image/png"
     }
   ],
