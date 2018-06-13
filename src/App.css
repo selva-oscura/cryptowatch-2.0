@@ -1,11 +1,9 @@
 .App {
   text-align: center;
   min-height: 100vh;
-  background-color: #222;
-  color: #bbb;
 }
 
-.wrapper{
+.wrapper {
   width: 100%;
 }
 @media (min-width: 900px) {
@@ -21,13 +19,13 @@
   }
 }
 
-
 .App-header {
   height: 50px;
   padding: 4px;
 }
 
-.quote-normal, .quote-tiny {
+.quote-normal,
+.quote-tiny {
   margin-top: 0px;
   margin-bottom: 0px;
   padding-top: 0px;
@@ -45,7 +43,6 @@
   display: flex;
   flex-direction: column;
 }
-
 
 .full {
   width: 100%;
