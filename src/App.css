@@ -3,20 +3,28 @@
   min-height: 100vh;
 }
 
-.wrapper {
+.App .wrapper {
   width: 100%;
 }
 @media (min-width: 900px) {
-  .wrapper {
+  .App .wrapper {
     width: 90%;
     margin: 0 auto;
   }
 }
 @media (min-width: 1200px) {
-  .wrapper {
+  .App .wrapper {
     width: 80%;
     margin: 0 auto;
   }
+}
+
+.App .text-left {
+  text-align: left;
+}
+
+.App .text-right {
+  text-align: right;
 }
 
 .App-header {
@@ -24,17 +32,23 @@
   padding: 4px;
 }
 
-.quote-normal,
-.quote-tiny {
+.App h3 {
+  width: 95%;
+  /*  -webkit-margin-after: .5em;*/
+  margin: 1em auto 0.5em;
+}
+
+.App .quote-normal,
+.App .quote-tiny {
   margin-top: 0px;
   margin-bottom: 0px;
   padding-top: 0px;
   padding-bottom: 0px;
 }
-.quote-normal {
+.App .quote-normal {
   font-size: 24px;
 }
-.quote-tiny {
+.App .quote-tiny {
   font-size: 16px;
 }
 
@@ -44,30 +58,36 @@
   flex-direction: column;
 }
 
-.full {
-  width: 100%;
+.App .full {
+  width: 98%;
   padding-bottom: 12px;
   margin-bottom: 12px;
 }
 
 @media (min-width: 900px) {
-  .m-half {
+  .App .m-half {
     width: 49%;
     display: inline-block;
     vertical-align: top;
   }
+  h3 {
+    width: 98%;
+  }
 }
 @media (max-width: 799px) {
-  .s-full {
+  .App .s-full {
+    width: 100%;
+  }
+  h3 {
     width: 100%;
   }
 }
 
 @media (max-width: 450px) {
-  .quote-normal {
+  .App .quote-normal {
     font-size: 18px;
   }
-  .quote-tiny {
+  .App .quote-tiny {
     font-size: 12px;
   }
 }
