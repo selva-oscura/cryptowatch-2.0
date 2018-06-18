@@ -1,7 +1,7 @@
-import React from "react";
-import * as d3 from "d3";
-import CCC from "./utils/ccc-streamer-utilities.js";
-import "./LineGraph.css";
+import React from 'react';
+import * as d3 from 'd3';
+import CCC from './utils/ccc-streamer-utilities.js';
+import './LineGraph.css';
 
 const LineGraph = ({ currencyPair, data }) => {
   let min, max, numDays, currencySign;
@@ -34,7 +34,7 @@ const LineGraph = ({ currencyPair, data }) => {
     <div className="LineGraph">
       <div className="container">
         <svg width="100%" viewBox="0 0 400 200" preserveAspectRatio="none">
-          <path style={{ stroke: "grey", fill: "none" }} d={lineChart(data)} />
+          <path style={{ stroke: 'grey', fill: 'none' }} d={lineChart(data)} />
         </svg>
         <div className="caption">
           <p className="quote-normal">{currencyPair}</p>
