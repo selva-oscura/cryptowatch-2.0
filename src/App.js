@@ -3,6 +3,7 @@ import { allCurrencies } from './utils/currencies.js';
 import axios from 'axios';
 import io from 'socket.io-client';
 import CCC from './utils/ccc-streamer-utilities.js';
+import Offline from './Offline';
 import Currencies from './Currencies';
 import CurrentQuote from './CurrentQuote';
 import LineGraph from './LineGraph';
@@ -16,6 +17,7 @@ class App extends Component {
       localStorage && localStorage.cryptoGlanceData
         ? localStorage.cryptoGlanceData
         : null;
+    const timestamp = this.createNewDateTimeString();
     const state = cryptoGlanceData
       ? JSON.parse(cryptoGlanceData)
       : {
@@ -27,6 +29,8 @@ class App extends Component {
             toCur: ['USD'],
             display: [],
           },
+          offline: false,
+          timestamp,
         };
     this.state = state;
     // save state to localStorage if possible but not yet stored (on 1st visit)
@@ -56,10 +60,13 @@ class App extends Component {
     this.queryCryptoCompareHistoryData(`fsym=${f_cur}&tsym=${t_cur}`)
       .then(response => {
         if (response.status === 200) {
+          const timestamp = this.createNewDateTimeString();
           let { historical } = this.state;
           historical[`${f_cur}-${t_cur}`] = response.data.Data;
           const state = {
             ...this.state,
+            offline: false,
+            timestamp,
             historical,
           };
           this.updateStateAndLocalStorage(state);
@@ -68,6 +75,7 @@ class App extends Component {
       .catch(error => {
         const state = {
           ...this.state,
+          offline: true,
         };
         this.updateStateAndLocalStorage(state);
       });
@@ -126,14 +134,26 @@ class App extends Component {
             current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`].PRICE !== res.PRICE
           ) {
             current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = res;
+            const timestamp = this.createNewDateTimeString();
             const state = {
               ...this.state,
+              offline: false,
+              timestamp,
               current,
             };
             this.updateStateAndLocalStorage(state);
           }
         }
       }
+    });
+
+    // listen for lost connection and trigger offline notice
+    socket.on('connect_error', () => {
+      const state = {
+        ...this.state,
+        offline: true,
+      };
+      this.updateStateAndLocalStorage(state);
     });
   }
 
@@ -231,6 +251,13 @@ class App extends Component {
       });
   }
 
+  createNewDateTimeString() {
+    let d = new Date();
+    return `${d.toLocaleDateString('en-US')} at ${d.toLocaleTimeString(
+      'en-US'
+    )}`;
+  }
+
   componentWillMount() {
     // fetch historical data and subscribe to streaming quotes
     this.bootstrapData();
@@ -264,6 +291,10 @@ class App extends Component {
               selectedToCurrencies={selectedCurrencies.toCur}
               updateSelectedCurrencies={this.updateSelectedCurrencies}
             />
+            {this.state.offline &&
+              this.state.timestamp && (
+                <Offline timestamp={this.state.timestamp} />
+              )}
             {selectedCurrencies.display.map((currencyPair, i) => (
               <div className="full" key={selectedCurrencies.display[i]}>
                 <div className="m-half s-full">
