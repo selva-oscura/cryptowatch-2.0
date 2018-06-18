@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { allCurrencies } from './utils/currencies.js';
+import { allCurrencies } from '../utils/currencies.js';
 import axios from 'axios';
 import io from 'socket.io-client';
-import CCC from './utils/ccc-streamer-utilities.js';
+import CCC from '../api/ccc-streamer-utilities.js';
 import Offline from './Offline';
 import Currencies from './Currencies';
 import CurrentQuote from './CurrentQuote';

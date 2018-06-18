@@ -1,6 +1,6 @@
 import React from 'react';
-import CCC from './utils/ccc-streamer-utilities.js';
-import { currencyAbbreviations } from './utils/currencies.js';
+import CCC from '../api/ccc-streamer-utilities.js';
+import { currencyAbbreviations } from '../utils/currencies.js';
 import './CurrentQuote.css';
 
 const CurrentQuote = ({ current, yesterday }) => {
@@ -9,7 +9,7 @@ const CurrentQuote = ({ current, yesterday }) => {
   const fromCurrency =
     currencyAbbreviations.fromCurrencies[current.FROMSYMBOL] ||
     'flesh out currency list!';
-  if (yesterday) {
+  if (yesterday && current) {
     yesterdayClose = yesterday[yesterday.length - 1].close;
     priceChange = (
       100 *

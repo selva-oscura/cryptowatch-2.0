@@ -1,6 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
-import CCC from './utils/ccc-streamer-utilities.js';
+import CCC from '../api/ccc-streamer-utilities.js';
 import './LineGraph.css';
 
 const LineGraph = ({ currencyPair, data }) => {
