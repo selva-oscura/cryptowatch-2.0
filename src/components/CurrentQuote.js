@@ -9,7 +9,7 @@ const CurrentQuote = ({ current, yesterday }) => {
   const fromCurrency =
     currencyAbbreviations.fromCurrencies[current.FROMSYMBOL] ||
     'flesh out currency list!';
-  if (yesterday && current) {
+  if (yesterday && current.PRICE) {
     yesterdayClose = yesterday[yesterday.length - 1].close;
     priceChange = (
       100 *
@@ -34,7 +34,10 @@ const CurrentQuote = ({ current, yesterday }) => {
       <div className="third">
         <p className="quote-normal">
           {CCC.STATIC.CURRENCY.SYMBOL[current.TOSYMBOL]}
-          {current.PRICE.toFixed(2)}
+          {current.PRICE.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
         </p>
         <p className="quote-tiny">Current Price</p>
       </div>

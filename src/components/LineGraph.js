@@ -41,8 +41,15 @@ const LineGraph = ({ currencyPair, data }) => {
           <p className="quote-tiny">last {numDays} days</p>
           <p className="quote-tiny">
             {currencySign}
-            {min.toFixed(2)} - {currencySign}
-            {max.toFixed(2)}
+            {min.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{' '}
+            - {currencySign}
+            {max.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </p>
         </div>
       </div>
