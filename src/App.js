@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import { allCurrencies } from "./utils/currencies.js";
-import axios from "axios";
-import io from "socket.io-client";
-import CCC from "./utils/ccc-streamer-utilities.js";
-import Currencies from "./Currencies";
-import CurrentQuote from "./CurrentQuote";
-import LineGraph from "./LineGraph";
-import "./App.css";
+import React, { Component } from 'react';
+import { allCurrencies } from './utils/currencies.js';
+import axios from 'axios';
+import io from 'socket.io-client';
+import CCC from './utils/ccc-streamer-utilities.js';
+import Currencies from './Currencies';
+import CurrentQuote from './CurrentQuote';
+import LineGraph from './LineGraph';
+import './App.css';
 
 class App extends Component {
   constructor(props) {
@@ -23,70 +23,33 @@ class App extends Component {
           current: {},
           historical: {},
           selectedCurrencies: {
-            fromCur: ["BTC", "ETH"],
-            toCur: ["USD"],
-            display: []
-          }
+            fromCur: ['BTC', 'ETH'],
+            toCur: ['USD'],
+            display: [],
+          },
         };
     this.state = state;
-
     // save state to localStorage if possible but not yet stored (on 1st visit)
     if (localStorage && !localStorage.cryptoGlanceData) {
       localStorage.cryptoGlanceData = JSON.stringify(state);
     }
-
     // bind event handlers
     this.updateSelectedCurrencies = this.updateSelectedCurrencies.bind(this);
   }
 
   updateStateAndLocalStorage(state) {
-    state = { ...state };
     this.setState(state);
     if (localStorage) {
       localStorage.cryptoGlanceData = JSON.stringify(state);
     }
   }
 
-  bootstrapData() {
-    const { selectedCurrencies } = this.state;
-    let subscriptions = [];
-    selectedCurrencies.fromCur.forEach(f_cur => {
-      selectedCurrencies.toCur.forEach(t_cur => {
+  generateHistoricalDataFetches(fromCur, toCur) {
+    fromCur.forEach(f_cur => {
+      toCur.forEach(t_cur => {
         this.fetchHistoricalData(f_cur, t_cur);
-        subscriptions.push(`5~CCCAGG~${f_cur}~${t_cur}`);
       });
     });
-    this.subscribeToCurrentQuotes(subscriptions);
-    this.updateDisplayedCurrencyPairings();
-  }
-
-  updateDisplayedCurrencyPairings() {
-    let { selectedCurrencies, allCurrencies } = this.state;
-    selectedCurrencies.display = allCurrencies.pairingOrder.filter(item => {
-      let divider = item.indexOf("-"),
-        fromCur = item.slice(0, divider),
-        toCur = item.slice(divider + 1);
-      return selectedCurrencies.fromCur.includes(fromCur) &&
-        selectedCurrencies.toCur.includes(toCur)
-        ? item
-        : null;
-    });
-    const state = {
-      ...this.state,
-      selectedCurrencies
-    };
-    this.updateStateAndLocalStorage(state);
-  }
-
-  clearAllSubscriptions() {
-    const { selectedCurrencies } = this.state;
-    let subscriptions = [];
-    selectedCurrencies.fromCur.forEach(f_cur => {
-      selectedCurrencies.toCur.forEach(t_cur => {
-        subscriptions.push(`5~CCCAGG~${f_cur}~${t_cur}`);
-      });
-    });
-    this.unsubscribeToCurrentQuotes(subscriptions);
   }
 
   fetchHistoricalData(f_cur, t_cur) {
@@ -97,30 +60,61 @@ class App extends Component {
           historical[`${f_cur}-${t_cur}`] = response.data.Data;
           const state = {
             ...this.state,
-            historical
+            historical,
           };
           this.updateStateAndLocalStorage(state);
         }
       })
       .catch(error => {
-        console.log("error for", f_cur, t_cur, error);
+        const state = {
+          ...this.state,
+        };
+        this.updateStateAndLocalStorage(state);
       });
   }
 
-  subscribeToCurrentQuotes(subscriptions) {
+  generateCurrentQuoteSubscriptionsList(fromCur, toCur) {
+    let subscriptions = [];
+    fromCur.forEach(f_cur => {
+      toCur.forEach(t_cur => {
+        subscriptions.push(`5~CCCAGG~${f_cur}~${t_cur}`);
+      });
+    });
+    return subscriptions;
+  }
+
+  updateCurrentQuoteSubscriptions(subscriptions, addOrRemove) {
     // get current (current quotes object) in state
     let { current } = this.state;
-
     // instantiate socket
-    const socket = io.connect("https://streamer.cryptocompare.com/");
+    const socket = io.connect('https://streamer.cryptocompare.com/');
 
-    // subscribe to current quotes
-    socket.emit("SubAdd", { subs: subscriptions });
+    // checking for bad/missing parameters
+    if (
+      !subscriptions ||
+      !Array.isArray(subscriptions) ||
+      subscriptions.length
+    ) {
+      console.log(
+        'updateCurrentQuoteSubscriptions called with bad/no subscriptions:',
+        subscriptions
+      );
+    }
 
-    // listen to socket & update state
-    socket.on("m", message => {
-      let messageType = message.slice(0, message.indexOf("~"));
-      let res = {};
+    if (addOrRemove === 'add') {
+      socket.emit('SubAdd', { subs: subscriptions });
+    } else if (addOrRemove === 'remove') {
+      socket.emit('SubRemove', { subs: subscriptions });
+    } else {
+      console.log(
+        `updateCurrentQuoteSubscriptions called without addOrRemove ('${addOrRemove}' was passed)`
+      );
+    }
+
+    // listen to socket for subscribed data & update state
+    socket.on('m', message => {
+      let res = {},
+        messageType = message.slice(0, message.indexOf('~'));
       if (messageType === CCC.STATIC.TYPE.CURRENTAGG) {
         res = CCC.CURRENT.unpack(message);
 
@@ -134,7 +128,7 @@ class App extends Component {
             current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = res;
             const state = {
               ...this.state,
-              current
+              current,
             };
             this.updateStateAndLocalStorage(state);
           }
@@ -143,64 +137,88 @@ class App extends Component {
     });
   }
 
-  unsubscribeToCurrentQuotes(subscriptions) {
-    // instantiate socket
-    const socket = io.connect("https://streamer.cryptocompare.com/");
-    // unsubscribe to current quotes
-    socket.emit("SubRemove", { subs: subscriptions });
+  updateDisplayedCurrencyPairings(selectedCurrencies) {
+    let { allCurrencies } = this.state;
+    // pairingOrder is a masterlist of currency pairs
+    // used here to ensure currency pairings are always displayed in the same order
+    selectedCurrencies.display = allCurrencies.pairingOrder.filter(item => {
+      let divider = item.indexOf('-'),
+        fromCur = item.slice(0, divider),
+        toCur = item.slice(divider + 1);
+      return selectedCurrencies.fromCur.includes(fromCur) &&
+        selectedCurrencies.toCur.includes(toCur)
+        ? item
+        : null;
+    });
+    const state = {
+      ...this.state,
+      selectedCurrencies,
+    };
+    this.updateStateAndLocalStorage(state);
+  }
+
+  bootstrapData() {
+    const { selectedCurrencies } = this.state;
+    const subscriptions = this.generateCurrentQuoteSubscriptionsList(
+      selectedCurrencies.fromCur,
+      selectedCurrencies.toCur
+    );
+    this.updateCurrentQuoteSubscriptions(subscriptions, 'add');
+    this.generateHistoricalDataFetches(
+      selectedCurrencies.fromCur,
+      selectedCurrencies.toCur
+    );
+    this.updateDisplayedCurrencyPairings(selectedCurrencies);
   }
 
   updateSelectedCurrencies(clickedCurrency, fromOrTo) {
     let { selectedCurrencies } = this.state;
     let subscriptions = [];
-    if (selectedCurrencies[fromOrTo].includes(clickedCurrency)) {
-      if (fromOrTo === "fromCur") {
-        selectedCurrencies.toCur.forEach(t_cur => {
-          subscriptions.push(`5~CCCAGG~${clickedCurrency}~${t_cur}`);
-        });
-      } else {
-        selectedCurrencies.fromCur.forEach(f_cur => {
-          subscriptions.push(`5~CCCAGG~${f_cur}~${clickedCurrency}`);
-        });
-      }
-      this.unsubscribeToCurrentQuotes(subscriptions);
-      selectedCurrencies[fromOrTo] = selectedCurrencies[fromOrTo].filter(
-        item => {
-          return item !== clickedCurrency ? item : null;
-        }
+    if (fromOrTo === 'fromCur') {
+      // subscription updates for fromCur (cryptocurrencies)
+      subscriptions = this.generateCurrentQuoteSubscriptionsList(
+        [clickedCurrency],
+        selectedCurrencies.toCur
       );
-      selectedCurrencies.display = selectedCurrencies.display.filter(item => {
-        return item.includes(clickedCurrency) ? null : item;
-      });
-      const state = {
-        ...this.state,
-        selectedCurrencies
-      };
-      this.updateStateAndLocalStorage(state);
     } else {
-      selectedCurrencies[fromOrTo].push(clickedCurrency);
-      if (fromOrTo === "fromCur") {
-        selectedCurrencies.toCur.forEach(t_cur => {
-          this.fetchHistoricalData(clickedCurrency, t_cur);
-          subscriptions.push(`5~CCCAGG~${clickedCurrency}~${t_cur}`);
-        });
-      } else {
-        selectedCurrencies.fromCur.forEach(f_cur => {
-          this.fetchHistoricalData(f_cur, clickedCurrency);
-          subscriptions.push(`5~CCCAGG~${f_cur}~${clickedCurrency}`);
-        });
-      }
-      selectedCurrencies.display = selectedCurrencies.display.filter(item => {
-        return item.includes(clickedCurrency) ? null : item;
-      });
-      const state = {
-        ...this.state,
-        selectedCurrencies
-      };
-      this.updateStateAndLocalStorage(state);
-      this.subscribeToCurrentQuotes(subscriptions);
-      this.updateDisplayedCurrencyPairings();
+      // subscription updates for toCur ('real' currencies)
+      subscriptions = this.generateCurrentQuoteSubscriptionsList(
+        selectedCurrencies.fromCur,
+        [clickedCurrency]
+      );
     }
+    if (selectedCurrencies[fromOrTo].includes(clickedCurrency)) {
+      // removing subscriptions for currencies that had been selected and are now being unselected
+      this.updateCurrentQuoteSubscriptions(subscriptions, 'remove');
+      selectedCurrencies[fromOrTo] = selectedCurrencies[fromOrTo].filter(
+        item => (item !== clickedCurrency ? item : null)
+      );
+    } else {
+      // adding subscriptions and fetching history for currencies that have just been selected
+      selectedCurrencies[fromOrTo].push(clickedCurrency);
+      if (fromOrTo === 'fromCur') {
+        this.generateHistoricalDataFetches(
+          [clickedCurrency],
+          selectedCurrencies.toCur
+        );
+      } else {
+        // getting data for toCur ('real' currencies)
+        this.generateHistoricalDataFetches(selectedCurrencies.fromCur, [
+          clickedCurrency,
+        ]);
+      }
+      this.updateCurrentQuoteSubscriptions(subscriptions, 'add');
+    }
+    this.updateDisplayedCurrencyPairings(selectedCurrencies);
+  }
+
+  clearAllSubscriptions() {
+    const { selectedCurrencies } = this.state;
+    const subscriptions = this.generateCurrentQuoteSubscriptionsList(
+      selectedCurrencies.fromCur,
+      selectedCurrencies.toCur
+    );
+    this.updateCurrentQuoteSubscriptions(subscriptions, 'remove');
   }
 
   queryCryptoCompareHistoryData(currencyPair) {
