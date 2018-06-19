@@ -1,13 +1,13 @@
 import React from 'react';
 import CurrencyButton from './CurrencyButton';
 
-const Currencies = ({
+const CurrencySelection = ({
   allCurrencies,
   selectedFromCurrencies,
   selectedToCurrencies,
   updateSelectedCurrencies,
 }) => (
-  <div>
+  <div className="CurrencySelection">
     <h2>Select Currencies</h2>
     <div className="full">
       <h3 className="text-left">Crypto-Currencies:</h3>
@@ -43,4 +43,4 @@ const Currencies = ({
   </div>
 );
 
-export default Currencies;
+export default CurrencySelection;
