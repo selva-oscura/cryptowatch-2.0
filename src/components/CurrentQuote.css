@@ -11,6 +11,23 @@
   vertical-align: top;
 }
 
+.up,
+.down {
+  margin-top: -2px;
+}
+
+.up {
+  color: green;
+}
+
+.no-change {
+  color: yellow;
+}
+
+.down {
+  color: red;
+}
+
 .up-arrow,
 .down-arrow {
   font-size: 36px;
@@ -21,11 +38,8 @@
   line-height: 24px;
 }
 
-.up {
-  color: green;
-}
-
 .up-arrow {
+  padding-left: 6px;
   /* Safari */
   -webkit-transform: rotate(90deg);
   /* Firefox */
@@ -39,11 +53,8 @@
   transform: rotate(90deg);
 }
 
-.down {
-  color: red;
-}
-
 .down-arrow {
+  padding-right: 6px;
   /* Safari */
   -webkit-transform: rotate(-90deg);
   /* Firefox */
@@ -55,10 +66,6 @@
   /* Internet Explorer */
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
   transform: rotate(-90deg);
-}
-
-.no-change {
-  color: yellow;
 }
 
 .no-change-arrow {
