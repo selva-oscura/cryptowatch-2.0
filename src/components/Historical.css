@@ -1,0 +1,17 @@
+.Historical {
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  width: 95%;
+  margin: 24px auto 0px;
+  display: block;
+  flex-grow: 1;
+}
+
+.Historical .container {
+  position: relative;
+  height: 220px;
+  max-height: 220px;
+  border: 1px solid #666;
+  width: 100%;
+}

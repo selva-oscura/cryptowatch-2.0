@@ -1,0 +1,13 @@
+.LineGraphCaption {
+  position: absolute;
+  max-height: 200px;
+  top: 0;
+  top: 12px;
+  left: 12px;
+  width: calc(100% - 24px);
+}
+
+.LineGraphCaption p {
+  text-shadow: 1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black,
+    -1px 1px 2px black;
+}
