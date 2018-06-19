@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { allCurrencies } from '../utils/currencies.js';
+import { allCurrencies } from '../fixtures/currencies.js';
 import axios from 'axios';
 import io from 'socket.io-client';
 import CCC from '../api/ccc-streamer-utilities.js';
@@ -294,6 +294,7 @@ class App extends Component {
 
           <div className="App-body">
             <Currencies
+              allCurrencies={allCurrencies}
               selectedFromCurrencies={selectedCurrencies.fromCur}
               selectedToCurrencies={selectedCurrencies.toCur}
               updateSelectedCurrencies={this.updateSelectedCurrencies}
