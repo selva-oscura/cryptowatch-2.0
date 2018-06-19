@@ -1,6 +1,6 @@
 import React from 'react';
 import CCC from '../api/ccc-streamer-utilities.js';
-import { currencyAbbreviations } from '../utils/currencies.js';
+import { currencyAbbreviations } from '../fixtures/currencies.js';
 import './CurrentQuote.css';
 
 const CurrentQuote = ({ current, yesterday }) => {
@@ -12,8 +12,8 @@ const CurrentQuote = ({ current, yesterday }) => {
   if (yesterday && current.PRICE) {
     yesterdayClose = yesterday[yesterday.length - 1].close;
     priceChange = (
-      100 *
-      ((current.PRICE - yesterdayClose) / yesterdayClose)
+      (100 * (current.PRICE - yesterdayClose)) /
+      yesterdayClose
     ).toFixed(2);
     if (priceChange > 0) {
       priceDir = 'up';
@@ -27,27 +27,29 @@ const CurrentQuote = ({ current, yesterday }) => {
 
   return (
     <div className="CurrentQuote">
-      <div className="third">
-        <p className="quote-normal">{current.FROMSYMBOL}</p>
-        <p className="quote-tiny">{fromCurrency}</p>
-      </div>
-      <div className="third">
-        <p className="quote-normal">
-          {CCC.STATIC.CURRENCY.SYMBOL[current.TOSYMBOL]}
-          {current.PRICE.toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </p>
-        <p className="quote-tiny">Current Price</p>
-      </div>
-      <div className="third">
-        <p className={`quote-normal ${priceDir}`}>
-          <span className={`${priceDir}-arrow`}>&lsaquo;</span>
-          &nbsp;&nbsp;
-          {priceChange}
-        </p>
-        <p className="quote-tiny">from yesterday&apos;s close</p>
+      <div className="flex-container">
+        <div className="flex-item" style={{ textAlign: 'left' }}>
+          <p className="quote-normal">{current.FROMSYMBOL}</p>
+          <p className="quote-tiny">{fromCurrency}</p>
+        </div>
+        <div className="flex-item">
+          <p className="quote-normal">
+            {CCC.STATIC.CURRENCY.SYMBOL[current.TOSYMBOL]}
+            {current.PRICE.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
+          <p className="quote-tiny">Current Price</p>
+        </div>
+        <div className="flex-item" style={{ textAlign: 'right' }}>
+          <p className={`quote-normal ${priceDir}`}>
+            <span className={`${priceDir}-arrow`}>&lsaquo;</span>
+            &nbsp;&nbsp;
+            {priceChange}
+          </p>
+          <p className="quote-tiny">from yesterday&apos;s close</p>
+        </div>
       </div>
     </div>
   );
