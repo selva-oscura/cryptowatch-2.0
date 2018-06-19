@@ -12,13 +12,13 @@ class App extends Component {
   constructor(props) {
     super(props);
     // set initial state from localStorage data or default
-    const cryptoGlanceData =
-      localStorage && localStorage.cryptoGlanceData
-        ? localStorage.cryptoGlanceData
+    const cryptoGlance =
+      localStorage && localStorage.cryptoGlance
+        ? localStorage.cryptoGlance
         : null;
     const timestamp = this.createNewDateTimeString();
-    const state = cryptoGlanceData
-      ? JSON.parse(cryptoGlanceData)
+    const state = cryptoGlance
+      ? JSON.parse(cryptoGlance)
       : {
           allCurrencies,
           current: {},
@@ -33,8 +33,8 @@ class App extends Component {
         };
     this.state = state;
     // save state to localStorage if possible but not yet stored (on 1st visit)
-    if (localStorage && !localStorage.cryptoGlanceData) {
-      localStorage.cryptoGlanceData = JSON.stringify(state);
+    if (localStorage && !localStorage.cryptoGlance) {
+      localStorage.cryptoGlance = JSON.stringify(state);
     }
     // bind event handlers
     this.updateSelectedCurrencies = this.updateSelectedCurrencies.bind(this);
@@ -44,7 +44,7 @@ class App extends Component {
   updateStateAndLocalStorage(state) {
     this.setState(state);
     if (localStorage) {
-      localStorage.cryptoGlanceData = JSON.stringify(state);
+      localStorage.cryptoGlance = JSON.stringify(state);
     }
   }
 
