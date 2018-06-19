@@ -1,3 +1,6 @@
+* {
+  box-sizing: border-box;
+}
 html {
   overflow: -moz-scrollbars-vertical;
   overflow-y: scroll;
@@ -9,5 +12,13 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-  box-sizing: border-box;
+}
+
+.flex-container {
+  display: flex;
+}
+
+.flex-item {
+  flex-grow: 1;
+  justify-content: space-between;
 }

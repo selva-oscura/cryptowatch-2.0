@@ -23,6 +23,7 @@
 .LineGraph .caption {
   top: 12px;
   left: 12px;
+  width: calc(100% - 24px);
 }
 
 .LineGraph .caption p {

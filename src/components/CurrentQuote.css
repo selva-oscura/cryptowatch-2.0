@@ -1,18 +1,13 @@
 .CurrentQuote {
   width: 95%;
   margin: 24px auto 0px;
-  padding: 24px 0px;
+  padding: 24px 12px;
   border: 1px solid #666;
 }
 
-.third {
-  width: 33%;
-  display: inline-block;
-  vertical-align: top;
-}
-
 .up,
-.down {
+.down,
+.no-change {
   margin-top: -2px;
 }
 
