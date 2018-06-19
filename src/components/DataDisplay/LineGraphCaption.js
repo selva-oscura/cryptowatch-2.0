@@ -1,8 +1,7 @@
 import React from 'react';
-import CCC from '../api/ccc-streamer-utilities.js';
 import './LineGraphCaption.css';
 
-const LineGraphCaption = ({ currencyPair, data }) => {
+const LineGraphCaption = ({ currencyPair, data, symbols }) => {
   let minPrice = Infinity,
     maxPrice = -Infinity,
     minPriceDate,
@@ -52,7 +51,7 @@ const LineGraphCaption = ({ currencyPair, data }) => {
   endDate = formatDateFromTimestamp(endDate);
 
   // get currency symbol for real currency
-  currencySymbol = CCC.STATIC.CURRENCY.SYMBOL[currencyPair.slice(-3)];
+  currencySymbol = symbols[currencyPair.slice(-3)];
 
   return (
     <div className="LineGraphCaption">

@@ -3,11 +3,15 @@ import LineGraph from './LineGraph';
 import LineGraphCaption from './LineGraphCaption';
 import './Historical.css';
 
-const Historical = ({ currencyPair, data }) => (
+const Historical = ({ currencyPair, data, symbols }) => (
   <div className="Historical">
     <div className="container">
       <LineGraph data={data} />
-      <LineGraphCaption currencyPair={currencyPair} data={data} />
+      <LineGraphCaption
+        currencyPair={currencyPair}
+        data={data}
+        symbols={symbols}
+      />
     </div>
   </div>
 );

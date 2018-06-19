@@ -1,9 +1,8 @@
 import React from 'react';
-import CCC from '../api/ccc-streamer-utilities.js';
-import { currencyAbbreviations } from '../fixtures/currencies.js';
+import { currencyAbbreviations } from '../../fixtures/currencies.js';
 import './CurrentQuote.css';
 
-const CurrentQuote = ({ current, yesterday }) => {
+const CurrentQuote = ({ current, yesterday, symbols }) => {
   let yesterdayClose, priceChange;
   let priceDir = 'no-change';
   const fromCurrency =
@@ -34,7 +33,7 @@ const CurrentQuote = ({ current, yesterday }) => {
         </div>
         <div className="flex-item">
           <p className="quote-normal">
-            {CCC.STATIC.CURRENCY.SYMBOL[current.TOSYMBOL]}
+            {symbols[current.TOSYMBOL]}
             {current.PRICE.toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
