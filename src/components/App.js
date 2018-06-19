@@ -6,7 +6,7 @@ import CCC from '../api/ccc-streamer-utilities.js';
 import Offline from './Offline';
 import Currencies from './Currencies';
 import CurrentQuote from './CurrentQuote';
-import LineGraph from './LineGraph';
+import Historical from './Historical';
 import './App.css';
 
 class App extends Component {
@@ -317,7 +317,7 @@ class App extends Component {
 
                 <div className="m-half s-full LineGraphs">
                   {historical[currencyPair] && (
-                    <LineGraph
+                    <Historical
                       key={i}
                       currencyPair={currencyPair}
                       data={historicalCloseData[currencyPair]}

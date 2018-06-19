@@ -52,12 +52,6 @@
   font-size: 16px;
 }
 
-.LineGraphs {
-  display: -webkit-flex;
-  display: flex;
-  flex-direction: column;
-}
-
 .App .full {
   width: 98%;
   padding-bottom: 12px;
