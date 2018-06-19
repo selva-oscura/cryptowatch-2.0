@@ -4,9 +4,8 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import CCC from '../api/ccc-streamer-utilities.js';
 import Offline from './Offline';
-import Currencies from './Currencies';
-import CurrentQuote from './CurrentQuote';
-import Historical from './Historical';
+import CurrencySelection from './CurrencySelection/CurrencySelection';
+import DataDisplay from './DataDisplay/DataDisplay';
 import './App.css';
 
 class App extends Component {
@@ -277,13 +276,6 @@ class App extends Component {
 
   render() {
     let { current, historical, selectedCurrencies } = this.state;
-    let historicalKeys = Object.keys(historical),
-      historicalCloseData = {};
-    historicalKeys.forEach(currencyPair => {
-      historicalCloseData[`${currencyPair}`] = historical[
-        `${currencyPair}`
-      ].map(point => [point.time, point.close]);
-    });
 
     return (
       <div className="App">
@@ -293,7 +285,7 @@ class App extends Component {
           </div>
 
           <div className="App-body">
-            <Currencies
+            <CurrencySelection
               allCurrencies={allCurrencies}
               selectedFromCurrencies={selectedCurrencies.fromCur}
               selectedToCurrencies={selectedCurrencies.toCur}
@@ -303,29 +295,12 @@ class App extends Component {
               this.state.timestamp && (
                 <Offline timestamp={this.state.timestamp} />
               )}
-            {selectedCurrencies.display.map((currencyPair, i) => (
-              <div className="full" key={selectedCurrencies.display[i]}>
-                <div className="m-half s-full">
-                  {current[currencyPair] && (
-                    <CurrentQuote
-                      key={i}
-                      current={current[currencyPair]}
-                      yesterday={historical[currencyPair]}
-                    />
-                  )}
-                </div>
-
-                <div className="m-half s-full LineGraphs">
-                  {historical[currencyPair] && (
-                    <Historical
-                      key={i}
-                      currencyPair={currencyPair}
-                      data={historicalCloseData[currencyPair]}
-                    />
-                  )}
-                </div>
-              </div>
-            ))}
+            <DataDisplay
+              selectedCurrencies={selectedCurrencies}
+              current={current}
+              historical={historical}
+              symbols={CCC.STATIC.CURRENCY.SYMBOL}
+            />
           </div>
           {/* end of App-body */}
         </div>
