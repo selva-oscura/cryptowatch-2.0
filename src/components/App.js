@@ -41,6 +41,7 @@ class App extends Component {
     this.updateSelectedCurrencies = this.updateSelectedCurrencies.bind(this);
   }
 
+  // update state and localStorage
   updateStateAndLocalStorage(state) {
     this.setState(state);
     if (localStorage) {
@@ -101,11 +102,13 @@ class App extends Component {
     if (
       !subscriptions ||
       !Array.isArray(subscriptions) ||
-      subscriptions.length
+      !subscriptions.length
     ) {
       console.log(
         'updateCurrentQuoteSubscriptions called with bad/no subscriptions:',
-        subscriptions
+        subscriptions,
+        'subscriptions.length:',
+        subscriptions.length
       );
     }
 
@@ -193,6 +196,8 @@ class App extends Component {
 
   updateSelectedCurrencies(clickedCurrency, fromOrTo) {
     let { selectedCurrencies } = this.state;
+
+    // create list of subscriptions to update
     let subscriptions = [];
     if (fromOrTo === 'fromCur') {
       // subscription updates for fromCur (cryptocurrencies)
@@ -207,27 +212,29 @@ class App extends Component {
         [clickedCurrency]
       );
     }
+
     if (selectedCurrencies[fromOrTo].includes(clickedCurrency)) {
-      // removing subscriptions for currencies that had been selected and are now being unselected
+      // remove subscriptions for deselected currency
       this.updateCurrentQuoteSubscriptions(subscriptions, 'remove');
       selectedCurrencies[fromOrTo] = selectedCurrencies[fromOrTo].filter(
         item => (item !== clickedCurrency ? item : null)
       );
     } else {
-      // adding subscriptions and fetching history for currencies that have just been selected
+      // add subscriptions and fetch history for newly selected currencies
+      this.updateCurrentQuoteSubscriptions(subscriptions, 'add');
       selectedCurrencies[fromOrTo].push(clickedCurrency);
       if (fromOrTo === 'fromCur') {
+        // fetch historical data for newly selected cryptocurrency and all currently selected real currencies
         this.generateHistoricalDataFetches(
           [clickedCurrency],
           selectedCurrencies.toCur
         );
       } else {
-        // getting data for toCur ('real' currencies)
+        // fetch historical data for newly selected real currency and all currently selected cryptocurrencies
         this.generateHistoricalDataFetches(selectedCurrencies.fromCur, [
           clickedCurrency,
         ]);
       }
-      this.updateCurrentQuoteSubscriptions(subscriptions, 'add');
     }
     this.updateDisplayedCurrencyPairings(selectedCurrencies);
   }
