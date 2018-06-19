@@ -6,12 +6,12 @@ const CurrentQuote = ({ current, yesterday, symbols }) => {
   let yesterdayClose, priceChange;
   let priceDir = 'no-change';
   const fromCurrency =
-    currencyAbbreviations.fromCurrencies[current.FROMSYMBOL] ||
+    currencyAbbreviations.fromCurrencies[current.fromCur] ||
     'flesh out currency list!';
-  if (yesterday && current.PRICE) {
+  if (yesterday && current.price) {
     yesterdayClose = yesterday[yesterday.length - 1].close;
     priceChange = (
-      (100 * (current.PRICE - yesterdayClose)) /
+      (100 * (current.price - yesterdayClose)) /
       yesterdayClose
     ).toFixed(2);
     if (priceChange > 0) {
@@ -28,13 +28,13 @@ const CurrentQuote = ({ current, yesterday, symbols }) => {
     <div className="CurrentQuote">
       <div className="flex-container">
         <div className="flex-item" style={{ textAlign: 'left' }}>
-          <p className="quote-normal">{current.FROMSYMBOL}</p>
+          <p className="quote-normal">{current.fromCur}</p>
           <p className="quote-tiny">{fromCurrency}</p>
         </div>
         <div className="flex-item">
           <p className="quote-normal">
-            {symbols[current.TOSYMBOL]}
-            {current.PRICE.toLocaleString('en-US', {
+            {symbols[current.toCur]}
+            {current.price.toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
