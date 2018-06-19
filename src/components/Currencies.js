@@ -1,8 +1,8 @@
 import React from 'react';
-import { allCurrencies } from '../utils/currencies.js';
 import CurrencyButton from './CurrencyButton';
 
 const Currencies = ({
+  allCurrencies,
   selectedFromCurrencies,
   selectedToCurrencies,
   updateSelectedCurrencies,
