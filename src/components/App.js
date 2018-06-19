@@ -62,7 +62,9 @@ class App extends Component {
         if (response.status === 200) {
           const timestamp = this.createNewDateTimeString();
           let { historical } = this.state;
-          historical[`${f_cur}-${t_cur}`] = response.data.Data;
+          historical[`${f_cur}-${t_cur}`] = response.data.Data.map(d => {
+            return { close: d.close, time: d.time };
+          });
           const state = {
             ...this.state,
             offline: false,
@@ -135,7 +137,11 @@ class App extends Component {
             current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] === undefined ||
             current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`].PRICE !== res.PRICE
           ) {
-            current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = res;
+            current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = {
+              price: res.PRICE,
+              fromCur: res.FROMSYMBOL,
+              toCur: res.TOSYMBOL,
+            };
             const timestamp = this.createNewDateTimeString();
             const state = {
               ...this.state,
