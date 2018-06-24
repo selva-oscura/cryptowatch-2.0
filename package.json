@@ -36,7 +36,7 @@
   "scripts": {
     "start": "yarn run lint && react-scripts start",
     "build": "react-scripts build",
-    "lint": "prettier --single-quote --trailing-comma es5 --write './src/*.js'",
+    "lint": "prettier --single-quote --trailing-comma es5 --write src/*.js src/components/*.js src/components/*/*.js",
     "precommit": "pretty-quick --staged",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
