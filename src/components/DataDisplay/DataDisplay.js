@@ -92,7 +92,8 @@ const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
     }
     return 'no-change';
   };
-  const getSymbol = currencyPair => symbols[current[currencyPair].toCur];
+  const getSymbol = (currencyPair, fromOrTo) =>
+    symbols[current[currencyPair][fromOrTo]];
 
   return (
     <div className="DataDisplay">
@@ -107,7 +108,7 @@ const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
                 currentPrice={getCurrentPrice(currencyPair)}
                 priceDir={getPriceDir(currencyPair)}
                 priceChange={getPriceChange(currencyPair)}
-                symbol={getSymbol(currencyPair)}
+                symbol={getSymbol(currencyPair, 'toCur')}
               />
             )}
           </div>
@@ -119,7 +120,7 @@ const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
                 currencyPair={currencyPair}
                 seriesData={historicalCloseData[currencyPair]}
                 rangeData={historicalRange[currencyPair]}
-                symbols={symbols}
+                symbol={getSymbol(currencyPair, 'toCur')}
               />
             )}
           </div>

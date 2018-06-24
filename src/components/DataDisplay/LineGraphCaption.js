@@ -1,10 +1,7 @@
 import React from 'react';
 import './LineGraphCaption.css';
 
-const LineGraphCaption = ({ currencyPair, rangeData, symbols }) => {
-  // get currency symbol for real currency
-  let currencySymbol = symbols[currencyPair.slice(-3)];
-
+const LineGraphCaption = ({ currencyPair, rangeData, symbol }) => {
   return (
     <div className="LineGraphCaption">
       <div className="flex-container" style={{ alignItems: 'flex-end' }}>
@@ -25,19 +22,19 @@ const LineGraphCaption = ({ currencyPair, rangeData, symbols }) => {
       <div className="flex-container">
         <div className="flex-item">
           <p className="quote-tiny" style={{ textAlign: 'left' }}>
-            {rangeData.startDate}: {currencySymbol}
+            {rangeData.startDate}: {symbol}
             {rangeData.startPrice}
             <br />
-            {rangeData.endDate}: {currencySymbol}
+            {rangeData.endDate}: {symbol}
             {rangeData.endPrice}
           </p>
         </div>
         <div className="flex-item">
           <p className="quote-tiny" style={{ textAlign: 'right' }}>
-            low: {currencySymbol}
+            low: {symbol}
             {rangeData.minPrice} on {rangeData.minPriceDate}
             <br />
-            high: {currencySymbol}
+            high: {symbol}
             {rangeData.maxPrice} on {rangeData.maxPriceDate}
           </p>
         </div>
