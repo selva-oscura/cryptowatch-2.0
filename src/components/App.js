@@ -6,6 +6,7 @@ import CCC from '../api/ccc-streamer-utilities.js';
 import Offline from './Offline';
 import CurrencySelection from './CurrencySelection/CurrencySelection';
 import DataDisplay from './DataDisplay/DataDisplay';
+import { createNewDateTimeString } from '../utils/utils';
 import './App.css';
 
 class App extends Component {
@@ -16,7 +17,7 @@ class App extends Component {
       localStorage && localStorage.cryptoGlance
         ? localStorage.cryptoGlance
         : null;
-    const timestamp = this.createNewDateTimeString();
+    const timestamp = createNewDateTimeString();
     const state = cryptoGlance
       ? JSON.parse(cryptoGlance)
       : {
@@ -60,10 +61,10 @@ class App extends Component {
     this.queryCryptoCompareHistoryData(`fsym=${f_cur}&tsym=${t_cur}`)
       .then(response => {
         if (response.status === 200) {
-          const timestamp = this.createNewDateTimeString();
+          const timestamp = createNewDateTimeString();
           let { historical } = this.state;
           historical[`${f_cur}-${t_cur}`] = response.data.Data.map(d => {
-            return { close: d.close, time: d.time };
+            return { close: d.close, time: d.time, high: d.high, low: d.low };
           });
           const state = {
             ...this.state,
@@ -142,7 +143,7 @@ class App extends Component {
               fromCur: res.FROMSYMBOL,
               toCur: res.TOSYMBOL,
             };
-            const timestamp = this.createNewDateTimeString();
+            const timestamp = createNewDateTimeString();
             const state = {
               ...this.state,
               offline: false,
@@ -261,13 +262,6 @@ class App extends Component {
       .catch(error => {
         throw error;
       });
-  }
-
-  createNewDateTimeString() {
-    let d = new Date();
-    return `${d.toLocaleDateString('en-US')} at ${d.toLocaleTimeString(
-      'en-US'
-    )}`;
   }
 
   componentWillMount() {
