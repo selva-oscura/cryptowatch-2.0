@@ -110,8 +110,10 @@ class App extends Component {
         'updateCurrentQuoteSubscriptions called with bad/no subscriptions:',
         subscriptions,
         'subscriptions.length:',
-        subscriptions.length
+        subscriptions.length,
+        'probably due to 0 to (or 0 from) currencies being selected and then a from (or to) currency being selected/deselected'
       );
+      return;
     }
 
     if (addOrRemove === 'add') {
