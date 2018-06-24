@@ -1,15 +1,98 @@
 import React from 'react';
+import { currencyAbbreviations } from '../../fixtures/currencies.js';
+import {
+  countDays,
+  formatDateFromTimestamp,
+  formatPrice,
+} from '../../utils/utils';
 import CurrentQuote from './CurrentQuote';
 import Historical from './Historical';
 
 const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
   let historicalKeys = Object.keys(historical),
-    historicalCloseData = {};
+    historicalCloseData = {},
+    historicalRange = {};
+
+  // prepare data for Historical
   historicalKeys.forEach(currencyPair => {
+    let maxPrice = -Infinity,
+      maxPriceDate,
+      minPrice = Infinity,
+      minPriceDate;
+    const startPrice = historical[`${currencyPair}`][0].close,
+      startDate = historical[`${currencyPair}`][0].time,
+      endPrice =
+        historical[`${currencyPair}`][historical[`${currencyPair}`].length - 1]
+          .close,
+      endDate =
+        historical[`${currencyPair}`][historical[`${currencyPair}`].length - 1]
+          .time;
+
+    // prepare series data for d3 LineGraph
     historicalCloseData[`${currencyPair}`] = historical[`${currencyPair}`].map(
       point => [point.time, point.close]
     );
+
+    // prepare range data for LineGraphCaption
+    historical[`${currencyPair}`].forEach(point => {
+      if (point.low < minPrice) {
+        minPrice = point.low;
+        minPriceDate = point.time;
+      }
+      if (point.high > maxPrice) {
+        maxPrice = point.high;
+        maxPriceDate = point.time;
+      }
+    });
+    historicalRange[`${currencyPair}`] = {
+      maxPrice: formatPrice(maxPrice),
+      maxPriceDate: formatDateFromTimestamp(maxPriceDate),
+      minPrice: formatPrice(minPrice),
+      minPriceDate: formatDateFromTimestamp(minPriceDate),
+      startPrice: formatPrice(startPrice),
+      startDate: formatDateFromTimestamp(startDate),
+      endPrice: formatPrice(endPrice),
+      endDate: formatDateFromTimestamp(endDate),
+      numDays: countDays(startDate, endDate),
+    };
   });
+
+  // prepare data for CurrentQuote
+  const getCryptoLongName = currencyPair =>
+    currencyAbbreviations.fromCurrencies[current[currencyPair].fromCur];
+  const getCryptoShortName = currencyPair => current[currencyPair].fromCur;
+  const getCurrentPrice = currencyPair =>
+    formatPrice(current[currencyPair].price);
+
+  const getYesterdayClose = currencyPair => {
+    return historical && historical[currencyPair]
+      ? historical[currencyPair][historical[currencyPair].length - 1].close
+      : null;
+  };
+  const calculatePriceChange = currencyPair => {
+    let yesterdayClose = getYesterdayClose(currencyPair);
+    let currentPrice = current[currencyPair].price;
+    return yesterdayClose && currentPrice
+      ? (100 * (currentPrice - yesterdayClose)) / yesterdayClose
+      : '--';
+  };
+  const getPriceChange = currencyPair => {
+    const priceChange = calculatePriceChange(currencyPair);
+    return priceChange === '--'
+      ? priceChange
+      : Math.abs(priceChange).toFixed(3) + '%';
+  };
+  const getPriceDir = currencyPair => {
+    const priceChange = calculatePriceChange(currencyPair);
+    if (priceChange > 0) {
+      return 'up';
+    }
+    if (priceChange < 0) {
+      return 'down';
+    }
+    return 'no-change';
+  };
+  const getSymbol = currencyPair => symbols[current[currencyPair].toCur];
 
   return (
     <div className="DataDisplay">
@@ -19,9 +102,12 @@ const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
             {current[currencyPair] && (
               <CurrentQuote
                 key={i}
-                current={current[currencyPair]}
-                yesterday={historical[currencyPair]}
-                symbols={symbols}
+                cryptoShortName={getCryptoShortName(currencyPair)}
+                cryptoLongName={getCryptoLongName(currencyPair)}
+                currentPrice={getCurrentPrice(currencyPair)}
+                priceDir={getPriceDir(currencyPair)}
+                priceChange={getPriceChange(currencyPair)}
+                symbol={getSymbol(currencyPair)}
               />
             )}
           </div>
@@ -31,7 +117,8 @@ const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
               <Historical
                 key={i}
                 currencyPair={currencyPair}
-                data={historicalCloseData[currencyPair]}
+                seriesData={historicalCloseData[currencyPair]}
+                rangeData={historicalRange[currencyPair]}
                 symbols={symbols}
               />
             )}
