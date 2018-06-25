@@ -1,22 +1,19 @@
 import React from 'react';
-import * as d3 from 'd3';
+import { scaleLinear, extent, line } from 'd3';
 import './LineGraph.css';
 
-const LineGraph = ({ currencyPair, data }) => {
+const LineGraph = ({ data }) => {
   // prepare data for d3
   data = data.map(point => [point[0], -point[1]]);
 
   // d3 line chart
-  let xScale = d3
-    .scaleLinear()
-    .domain(d3.extent(data, ([x, y]) => x))
+  let xScale = scaleLinear()
+    .domain(extent(data, ([x, y]) => x))
     .range([0, 400]);
-  let yScale = d3
-    .scaleLinear()
-    .domain(d3.extent(data, ([x, y]) => y))
+  let yScale = scaleLinear()
+    .domain(extent(data, ([x, y]) => y))
     .range([0, 200]);
-  const lineChart = d3
-    .line()
+  const lineChart = line()
     .x(([x, y]) => xScale(x))
     .y(([x, y]) => yScale(y));
 
