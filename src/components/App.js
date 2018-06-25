@@ -100,23 +100,24 @@ class App extends Component {
     // instantiate socket
     const socket = io.connect('https://streamer.cryptocompare.com/');
 
+    console.log(
+      'received call to updateCurrentQuoteSubscriptions',
+      addOrRemove,
+      subscriptions
+    );
     // checking for bad/missing parameters
-    if (
-      !subscriptions ||
-      !Array.isArray(subscriptions) ||
-      !subscriptions.length
-    ) {
-      if (!subscriptions || !Array.isArray(subscriptions))
-        console.log(
-          'updateCurrentQuoteSubscriptions called with bad/no subscriptions:',
-          subscriptions,
-          'subscriptions.length:',
-          subscriptions.length
-        );
+    if (!subscriptions || !Array.isArray(subscriptions)) {
+      console.log(
+        'updateCurrentQuoteSubscriptions called with bad/no subscriptions:',
+        subscriptions,
+        'subscriptions.length:',
+        subscriptions.length
+      );
       // no console.log if !subscriptions.length (this happens whenever there are either no 'to currencies' and/or no 'from currencies' selected)
       return;
     }
-    if (!subscriptions.length)
+
+    if (subscriptions.length) {
       if (addOrRemove === 'add') {
         socket.emit('SubAdd', { subs: subscriptions });
       } else if (addOrRemove === 'remove') {
@@ -126,9 +127,11 @@ class App extends Component {
           `updateCurrentQuoteSubscriptions called without addOrRemove ('${addOrRemove}' was passed)`
         );
       }
+    }
 
     // listen to socket for subscribed data & update state
     socket.on('m', message => {
+      console.log('message received', message);
       let res = {},
         messageType = message.slice(0, message.indexOf('~'));
       if (messageType === CCC.STATIC.TYPE.CURRENTAGG) {
