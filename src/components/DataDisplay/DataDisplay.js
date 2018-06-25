@@ -7,6 +7,7 @@ import {
 } from '../../utils/utils';
 import CurrentQuote from './CurrentQuote';
 import Historical from './Historical';
+import PropTypes from 'prop-types';
 
 const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
   let historicalKeys = Object.keys(historical),
@@ -136,6 +137,32 @@ const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
       ))}
     </div>
   );
+};
+
+DataDisplay.propTypes = {
+  current: PropTypes.objectOf(
+    PropTypes.shape({
+      fromCur: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
+      toCur: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
+  historical: PropTypes.objectOf(
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        close: PropTypes.number.isRequired,
+        high: PropTypes.number.isRequired,
+        low: PropTypes.number.isRequired,
+        time: PropTypes.number.isRequired,
+      }).isRequired
+    ).isRequired
+  ),
+  selectedCurrencies: PropTypes.shape({
+    display: PropTypes.arrayOf(PropTypes.string).isRequired,
+    fromCur: PropTypes.arrayOf(PropTypes.string).isRequired,
+    toCur: PropTypes.arrayOf(PropTypes.string).isRequired,
+  }).isRequired,
+  symbols: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
 export default DataDisplay;

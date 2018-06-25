@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './CurrentQuote.css';
 
 const CurrentQuote = ({
@@ -33,5 +34,14 @@ const CurrentQuote = ({
     </div>
   </div>
 );
+
+CurrentQuote.propTypes = {
+  cryptoShortName: PropTypes.string.isRequired,
+  cryptoLongName: PropTypes.string.isRequired,
+  currentPrice: PropTypes.string.isRequired,
+  priceDir: PropTypes.string.isRequired,
+  priceChange: PropTypes.string.isRequired,
+  symbol: PropTypes.string.isRequired,
+};
 
 export default CurrentQuote;

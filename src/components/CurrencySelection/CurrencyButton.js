@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './CurrencyButton.css';
 
 const CurrencyButton = ({
@@ -20,6 +21,13 @@ const CurrencyButton = ({
       {currency[keys[0]]} ({keys[0]})
     </button>
   );
+};
+
+CurrencyButton.propTypes = {
+  currency: PropTypes.object.isRequired,
+  selected: PropTypes.arrayOf(PropTypes.string).isRequired,
+  fromOrTo: PropTypes.oneOf(['fromCur', 'toCur']),
+  updateSelectedCurrencies: PropTypes.func.isRequired,
 };
 
 export default CurrencyButton;

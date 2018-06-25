@@ -1,5 +1,6 @@
 import React from 'react';
 import { scaleLinear, extent, line } from 'd3';
+import PropTypes from 'prop-types';
 import './LineGraph.css';
 
 const LineGraph = ({ data }) => {
@@ -24,6 +25,25 @@ const LineGraph = ({ data }) => {
       </svg>
     </div>
   );
+};
+
+// custom propType function
+function arrayOfTwoNumbers(props, propName, componentName) {
+  const rightLength = props[propName].length === 2;
+  const rightContent = props[propName].every(num => typeof num === 'number');
+  return !rightLength || !rightContent
+    ? new Error(
+        `element ${propName} (${
+          props[propName]
+        }) in ${componentName} has length: ${
+          props[propName].length
+        } (expected 2) and numeric contents: ${rightContent} (expected true)`
+      )
+    : null;
+}
+
+LineGraph.propTypes = {
+  data: PropTypes.arrayOf(arrayOfTwoNumbers).isRequired,
 };
 
 export default LineGraph;

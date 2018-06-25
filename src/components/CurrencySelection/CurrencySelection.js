@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import CurrencyButton from './CurrencyButton';
 
 const CurrencySelection = ({
@@ -42,5 +43,18 @@ const CurrencySelection = ({
     </div>
   </div>
 );
+
+CurrencySelection.propTypes = {
+  allCurrencies: PropTypes.shape({
+    fromCurrencies: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string))
+      .isRequired,
+    pairingOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
+    toCurrencies: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string))
+      .isRequired,
+  }),
+  selectedFromCurrencies: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedToCurrencies: PropTypes.arrayOf(PropTypes.string).isRequired,
+  updateSelectedCurrencies: PropTypes.func.isRequired,
+};
 
 export default CurrencySelection;

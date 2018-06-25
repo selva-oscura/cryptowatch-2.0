@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './LineGraphCaption.css';
 
 const LineGraphCaption = ({ currencyPair, rangeData, symbol }) => {
@@ -41,6 +42,22 @@ const LineGraphCaption = ({ currencyPair, rangeData, symbol }) => {
       </div>
     </div>
   );
+};
+
+LineGraphCaption.propTypes = {
+  currencyPair: PropTypes.string.isRequired,
+  rangeData: PropTypes.shape({
+    endDate: PropTypes.string.isRequired,
+    endPrice: PropTypes.string.isRequired,
+    maxPrice: PropTypes.string.isRequired,
+    maxPriceDate: PropTypes.string.isRequired,
+    minPrice: PropTypes.string.isRequired,
+    minPriceDate: PropTypes.string.isRequired,
+    numDays: PropTypes.number.isRequired,
+    startDate: PropTypes.string.isRequired,
+    startPrice: PropTypes.string.isRequired,
+  }).isRequired,
+  symbol: PropTypes.string.isRequired,
 };
 
 export default LineGraphCaption;
