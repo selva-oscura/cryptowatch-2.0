@@ -131,7 +131,6 @@ class App extends Component {
 
     // listen to socket for subscribed data & update state
     socket.on('m', message => {
-      console.log('message received', message);
       let res = {},
         messageType = message.slice(0, message.indexOf('~'));
       if (messageType === CCC.STATIC.TYPE.CURRENTAGG) {
