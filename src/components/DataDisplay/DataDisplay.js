@@ -92,8 +92,16 @@ const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
     }
     return 'no-change';
   };
-  const getSymbol = (currencyPair, fromOrTo) =>
-    symbols[current[currencyPair][fromOrTo]];
+  const getSymbol = (currencyPair, fromOrTo) => {
+    return symbols &&
+      Object.keys(symbols).length &&
+      current &&
+      currencyPair.length &&
+      current[currencyPair] &&
+      fromOrTo.length
+      ? symbols[current[currencyPair][fromOrTo]]
+      : '';
+  };
 
   return (
     <div className="DataDisplay">
