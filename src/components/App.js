@@ -106,25 +106,26 @@ class App extends Component {
       !Array.isArray(subscriptions) ||
       !subscriptions.length
     ) {
-      console.log(
-        'updateCurrentQuoteSubscriptions called with bad/no subscriptions:',
-        subscriptions,
-        'subscriptions.length:',
-        subscriptions.length,
-        'probably due to 0 to (or 0 from) currencies being selected and then a from (or to) currency being selected/deselected'
-      );
+      if (!subscriptions || !Array.isArray(subscriptions))
+        console.log(
+          'updateCurrentQuoteSubscriptions called with bad/no subscriptions:',
+          subscriptions,
+          'subscriptions.length:',
+          subscriptions.length
+        );
+      // no console.log if !subscriptions.length (this happens whenever there are either no 'to currencies' and/or no 'from currencies' selected)
       return;
     }
-
-    if (addOrRemove === 'add') {
-      socket.emit('SubAdd', { subs: subscriptions });
-    } else if (addOrRemove === 'remove') {
-      socket.emit('SubRemove', { subs: subscriptions });
-    } else {
-      console.log(
-        `updateCurrentQuoteSubscriptions called without addOrRemove ('${addOrRemove}' was passed)`
-      );
-    }
+    if (!subscriptions.length)
+      if (addOrRemove === 'add') {
+        socket.emit('SubAdd', { subs: subscriptions });
+      } else if (addOrRemove === 'remove') {
+        socket.emit('SubRemove', { subs: subscriptions });
+      } else {
+        console.log(
+          `updateCurrentQuoteSubscriptions called without addOrRemove ('${addOrRemove}' was passed)`
+        );
+      }
 
     // listen to socket for subscribed data & update state
     socket.on('m', message => {
