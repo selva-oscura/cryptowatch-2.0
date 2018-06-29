@@ -10,8 +10,8 @@
 
 .Historical .container {
   position: relative;
-  height: 220px;
-  max-height: 220px;
+  height: 280px;
+  max-height: 280px;
   border: 1px solid #666;
   width: 100%;
 }

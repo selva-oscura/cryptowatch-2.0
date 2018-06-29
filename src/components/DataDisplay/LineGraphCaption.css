@@ -2,9 +2,9 @@
   position: absolute;
   max-height: 200px;
   top: 0;
-  top: 12px;
-  left: 12px;
-  width: calc(100% - 24px);
+  top: 8px;
+  left: 8px;
+  width: calc(100% - 16px);
 }
 
 .LineGraphCaption p {

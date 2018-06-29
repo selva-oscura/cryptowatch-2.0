@@ -1,6 +1,6 @@
 .LineGraph svg {
   position: absolute;
   max-height: 200px;
-  top: 10px;
+  top: 75px;
   left: 0;
 }
