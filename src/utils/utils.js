@@ -22,11 +22,18 @@ export const formatPrice = price =>
     maximumFractionDigits: 2,
   });
 
+export const convertBooleanObjToTrueOnlyArray = obj => {
+  return Object.keys(obj)
+    .map(key => key)
+    .filter(key => obj[key]);
+};
+
 const utils = {
   countDays,
   formatDateFromTimestamp,
   createNewDateTimeString,
   formatPrice,
+  convertBooleanObjToTrueOnlyArray,
 };
 
 export default utils;
