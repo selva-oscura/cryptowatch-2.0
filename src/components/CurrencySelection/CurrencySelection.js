@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import CurrencyButton from './CurrencyButton';
 
 const CurrencySelection = ({
-  allCurrencies,
+  currencyMasterlists,
   selectedFromCurrencies,
   selectedToCurrencies,
   updateSelectedCurrencies,
@@ -13,7 +13,7 @@ const CurrencySelection = ({
     <div className="full">
       <h3 className="text-left">Crypto-Currencies:</h3>
       <div className="currency-list">
-        {allCurrencies.fromCurrencies.map((currency, i) => (
+        {currencyMasterlists.fromCurrencies.map((currency, i) => (
           <CurrencyButton
             key={i}
             currency={currency}
@@ -30,7 +30,7 @@ const CurrencySelection = ({
         (price in terms of these currencies)
       </h3>
       <div className="currency-list">
-        {allCurrencies.toCurrencies.map((currency, i) => (
+        {currencyMasterlists.toCurrencies.map((currency, i) => (
           <CurrencyButton
             key={i}
             currency={currency}
@@ -45,15 +45,14 @@ const CurrencySelection = ({
 );
 
 CurrencySelection.propTypes = {
-  allCurrencies: PropTypes.shape({
+  currencyMasterlists: PropTypes.shape({
     fromCurrencies: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string))
       .isRequired,
-    pairingOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
     toCurrencies: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string))
       .isRequired,
   }),
-  selectedFromCurrencies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  selectedToCurrencies: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedFromCurrencies: PropTypes.object.isRequired,
+  selectedToCurrencies: PropTypes.object.isRequired,
   updateSelectedCurrencies: PropTypes.func.isRequired,
 };
 
