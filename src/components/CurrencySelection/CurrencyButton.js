@@ -9,12 +9,10 @@ const CurrencyButton = ({
   updateSelectedCurrencies,
 }) => {
   const keys = Object.keys(currency);
-  const buttonClass = selected.includes(keys[0])
+  const buttonClass = selected[keys[0]]
     ? 'currency-selected'
     : 'currency-unselected';
-  const handleClick = () => {
-    updateSelectedCurrencies(keys[0], fromOrTo);
-  };
+  const handleClick = () => updateSelectedCurrencies(keys[0], fromOrTo);
 
   return (
     <button className={buttonClass} onClick={handleClick}>
@@ -25,7 +23,7 @@ const CurrencyButton = ({
 
 CurrencyButton.propTypes = {
   currency: PropTypes.object.isRequired,
-  selected: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selected: PropTypes.object.isRequired,
   fromOrTo: PropTypes.oneOf(['fromCur', 'toCur']),
   updateSelectedCurrencies: PropTypes.func.isRequired,
 };
