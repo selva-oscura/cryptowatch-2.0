@@ -42,19 +42,9 @@ const fromCurrencies = [
     { RUB: 'Russian Ruble' },
     { INR: 'Indian Rupee' },
     { BRL: 'Brazilian Real' },
-  ],
-  pairingOrder = [];
-
-fromCurrencies.forEach(f_cur => {
-  toCurrencies.forEach(t_cur => {
-    let f_cur_abbr = Object.keys(f_cur),
-      t_cur_abbr = Object.keys(t_cur);
-    pairingOrder.push(`${f_cur_abbr[0]}-${t_cur_abbr[0]}`);
-  });
-});
+  ];
 
 export const allCurrencies = {
   fromCurrencies,
   toCurrencies,
-  pairingOrder,
 };
