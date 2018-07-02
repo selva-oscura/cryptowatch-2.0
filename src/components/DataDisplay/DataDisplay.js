@@ -159,8 +159,8 @@ DataDisplay.propTypes = {
   ),
   selectedCurrencies: PropTypes.shape({
     display: PropTypes.arrayOf(PropTypes.string).isRequired,
-    fromCur: PropTypes.arrayOf(PropTypes.string).isRequired,
-    toCur: PropTypes.arrayOf(PropTypes.string).isRequired,
+    fromCur: PropTypes.object.isRequired,
+    toCur: PropTypes.object.isRequired,
   }).isRequired,
   symbols: PropTypes.objectOf(PropTypes.string).isRequired,
 };
