@@ -12,8 +12,10 @@ export const formatDateFromTimestamp = timestamp => {
 };
 
 export const createNewDateTimeString = () => {
-  let d = new Date();
-  return `${d.toLocaleDateString('en-US')} at ${d.toLocaleTimeString('en-US')}`;
+  const date = new Date();
+  return `${date.toLocaleDateString('en-US')} at ${date.toLocaleTimeString(
+    'en-US'
+  )}`;
 };
 
 export const formatPrice = price =>
