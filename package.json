@@ -1,7 +1,7 @@
 {
   "name": "cryptowatch-2.0",
   "version": "0.1.0",
-  "description": "Web Application displaying Cryptocurrency-to-real-currency exchange rate quotes and historical data graphs. The app was built with React, API calls, web sockets, and D3.js",
+  "description": "Progressive Web Application displaying Cryptocurrency-to-real-currency exchange rate quotes and historical data graphs. The app was built with React, API calls, web sockets, and D3.js.",
   "homepage": "http://selva-oscura.github.io/cryptowatch-2.0",
   "repository": {
     "type": "git",
@@ -10,7 +10,7 @@
   "keywords": [
     "React",
     "d3",
-    "JS",
+    "PWA",
     "axios",
     "socket.io"
   ],
