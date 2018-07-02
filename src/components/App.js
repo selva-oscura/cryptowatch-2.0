@@ -1,42 +1,34 @@
 import React, { Component } from 'react';
-import { allCurrencies } from '../fixtures/currencies.js';
 import axios from 'axios';
 import io from 'socket.io-client';
+import initialState from './initialState';
 import CCC from '../api/ccc-streamer-utilities.js';
 import Offline from './Offline';
 import CurrencySelection from './CurrencySelection/CurrencySelection';
 import DataDisplay from './DataDisplay/DataDisplay';
-import { createNewDateTimeString } from '../utils/utils';
+import {
+  createNewDateTimeString,
+  convertBooleanObjToTrueOnlyArray,
+} from '../utils/utils';
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    // set initial state from localStorage data or default
-    const cryptoGlance =
-      localStorage && localStorage.cryptoGlance
-        ? localStorage.cryptoGlance
+
+    // set state from localStorage data or default initialState
+    const cryptoglance =
+      localStorage && localStorage.cryptoglance
+        ? localStorage.cryptoglance
         : null;
-    const timestamp = createNewDateTimeString();
-    const state = cryptoGlance
-      ? JSON.parse(cryptoGlance)
-      : {
-          allCurrencies,
-          current: {},
-          historical: {},
-          selectedCurrencies: {
-            fromCur: ['BTC', 'ETH'],
-            toCur: ['USD'],
-            display: [],
-          },
-          offline: false,
-          timestamp,
-        };
+    const state = cryptoglance ? JSON.parse(cryptoglance) : initialState;
     this.state = state;
+
     // save state to localStorage if possible but not yet stored (on 1st visit)
-    if (localStorage && !localStorage.cryptoGlance) {
-      localStorage.cryptoGlance = JSON.stringify(state);
+    if (localStorage && !localStorage.cryptoglance) {
+      localStorage.cryptoglance = JSON.stringify(state);
     }
+
     // bind event handlers
     this.updateSelectedCurrencies = this.updateSelectedCurrencies.bind(this);
   }
@@ -45,32 +37,43 @@ class App extends Component {
   updateStateAndLocalStorage(state) {
     this.setState(state);
     if (localStorage) {
-      localStorage.cryptoGlance = JSON.stringify(state);
+      localStorage.cryptoglance = JSON.stringify(state);
     }
   }
 
   generateHistoricalDataFetches(fromCur, toCur) {
-    fromCur.forEach(f_cur => {
-      toCur.forEach(t_cur => {
-        this.fetchHistoricalData(f_cur, t_cur);
+    // standardize fromCur and toCur data as array if data arrives as object with currency keys and true/false values
+    fromCur = Array.isArray(fromCur)
+      ? fromCur
+      : convertBooleanObjToTrueOnlyArray(fromCur);
+    toCur = Array.isArray(toCur)
+      ? toCur
+      : convertBooleanObjToTrueOnlyArray(toCur);
+
+    fromCur.forEach(fCur => {
+      toCur.forEach(tCur => {
+        this.fetchHistoricalData(fCur, tCur);
       });
     });
   }
 
-  fetchHistoricalData(f_cur, t_cur) {
-    this.queryCryptoCompareHistoryData(`fsym=${f_cur}&tsym=${t_cur}`)
+  fetchHistoricalData(fCur, tCur) {
+    this.queryCryptoCompareHistoryData(`fsym=${fCur}&tsym=${tCur}`)
       .then(response => {
         if (response.status === 200) {
           const timestamp = createNewDateTimeString();
-          let { historical } = this.state;
-          historical[`${f_cur}-${t_cur}`] = response.data.Data.map(d => {
+          let historical = { ...this.state.data.historical };
+          historical[`${fCur}-${tCur}`] = response.data.Data.map(d => {
             return { close: d.close, time: d.time, high: d.high, low: d.low };
           });
           const state = {
             ...this.state,
+            data: {
+              ...this.state.data,
+              historical,
+            },
             offline: false,
             timestamp,
-            historical,
           };
           this.updateStateAndLocalStorage(state);
         }
@@ -85,10 +88,18 @@ class App extends Component {
   }
 
   generateCurrentQuoteSubscriptionsList(fromCur, toCur) {
-    let subscriptions = [];
-    fromCur.forEach(f_cur => {
-      toCur.forEach(t_cur => {
-        subscriptions.push(`5~CCCAGG~${f_cur}~${t_cur}`);
+    const subscriptions = [];
+    // standardize fromCur and toCur data as array if data arrives as object with currency keys and true/false values
+    fromCur = Array.isArray(fromCur)
+      ? fromCur
+      : convertBooleanObjToTrueOnlyArray(fromCur);
+    toCur = Array.isArray(toCur)
+      ? toCur
+      : convertBooleanObjToTrueOnlyArray(toCur);
+
+    fromCur.forEach(fCur => {
+      toCur.forEach(tCur => {
+        subscriptions.push(`5~CCCAGG~${fCur}~${tCur}`);
       });
     });
     return subscriptions;
@@ -96,15 +107,11 @@ class App extends Component {
 
   updateCurrentQuoteSubscriptions(subscriptions, addOrRemove) {
     // get current (current quotes object) in state
-    let { current } = this.state;
+    let current = { ...this.state.data.current };
+
     // instantiate socket
     const socket = io.connect('https://streamer.cryptocompare.com/');
 
-    console.log(
-      'received call to updateCurrentQuoteSubscriptions',
-      addOrRemove,
-      subscriptions
-    );
     // checking for bad/missing parameters
     if (!subscriptions || !Array.isArray(subscriptions)) {
       console.log(
@@ -151,9 +158,12 @@ class App extends Component {
             const timestamp = createNewDateTimeString();
             const state = {
               ...this.state,
+              data: {
+                ...this.state.data,
+                current,
+              },
               offline: false,
               timestamp,
-              current,
             };
             this.updateStateAndLocalStorage(state);
           }
@@ -171,42 +181,49 @@ class App extends Component {
     });
   }
 
-  updateDisplayedCurrencyPairings(selectedCurrencies) {
-    let { allCurrencies } = this.state;
-    // pairingOrder is a masterlist of currency pairs
-    // used here to ensure currency pairings are always displayed in the same order
-    selectedCurrencies.display = allCurrencies.pairingOrder.filter(item => {
-      let divider = item.indexOf('-'),
-        fromCur = item.slice(0, divider),
-        toCur = item.slice(divider + 1);
-      return selectedCurrencies.fromCur.includes(fromCur) &&
-        selectedCurrencies.toCur.includes(toCur)
-        ? item
-        : null;
+  updateSelectedCurrenciesState(selectedCurrencies) {
+    // use currencyMasterlists as template for ordering display
+    const { currencyMasterlists } = this.state;
+    const display = [];
+    currencyMasterlists.fromCurrencies.forEach(fCur => {
+      fCur = Object.keys(fCur)[0];
+      // check against selected to see if this 'fromCurrency' (crypto) should be displayed and if we should bother looking for toCurrencies for this fromCurrency
+      if (selectedCurrencies.fromCur[fCur]) {
+        currencyMasterlists.toCurrencies.forEach(tCur => {
+          tCur = Object.keys(tCur)[0];
+          // check against selected to see if this 'toCurrency' (real) should be displayed
+          if (selectedCurrencies.toCur[tCur]) {
+            display.push(`${fCur}-${tCur}`);
+          }
+        });
+      }
     });
     const state = {
       ...this.state,
-      selectedCurrencies,
+      selectedCurrencies: {
+        ...selectedCurrencies,
+        display,
+      },
     };
     this.updateStateAndLocalStorage(state);
   }
 
   bootstrapData() {
-    const { selectedCurrencies } = this.state;
+    const { fromCur, toCur } = this.state.selectedCurrencies;
     const subscriptions = this.generateCurrentQuoteSubscriptionsList(
-      selectedCurrencies.fromCur,
-      selectedCurrencies.toCur
+      fromCur,
+      toCur
     );
     this.updateCurrentQuoteSubscriptions(subscriptions, 'add');
-    this.generateHistoricalDataFetches(
-      selectedCurrencies.fromCur,
-      selectedCurrencies.toCur
-    );
-    this.updateDisplayedCurrencyPairings(selectedCurrencies);
+    this.generateHistoricalDataFetches(fromCur, toCur);
+    this.updateSelectedCurrenciesState({ fromCur, toCur });
   }
 
   updateSelectedCurrencies(clickedCurrency, fromOrTo) {
-    let { selectedCurrencies } = this.state;
+    const selectedCurrencies = {
+      fromCur: { ...this.state.selectedCurrencies.fromCur },
+      toCur: { ...this.state.selectedCurrencies.toCur },
+    };
 
     // create list of subscriptions to update
     let subscriptions = [];
@@ -224,16 +241,13 @@ class App extends Component {
       );
     }
 
-    if (selectedCurrencies[fromOrTo].includes(clickedCurrency)) {
+    if (selectedCurrencies[fromOrTo][clickedCurrency]) {
       // remove subscriptions for deselected currency
       this.updateCurrentQuoteSubscriptions(subscriptions, 'remove');
-      selectedCurrencies[fromOrTo] = selectedCurrencies[fromOrTo].filter(
-        item => (item !== clickedCurrency ? item : null)
-      );
     } else {
       // add subscriptions and fetch history for newly selected currencies
       this.updateCurrentQuoteSubscriptions(subscriptions, 'add');
-      selectedCurrencies[fromOrTo].push(clickedCurrency);
+      // selectedCurrencies[fromOrTo].push(clickedCurrency);
       if (fromOrTo === 'fromCur') {
         // fetch historical data for newly selected cryptocurrency and all currently selected real currencies
         this.generateHistoricalDataFetches(
@@ -247,14 +261,18 @@ class App extends Component {
         ]);
       }
     }
-    this.updateDisplayedCurrencyPairings(selectedCurrencies);
+    // updates to selectedCurrencies
+    selectedCurrencies[fromOrTo][clickedCurrency] = !selectedCurrencies[
+      fromOrTo
+    ][clickedCurrency];
+    this.updateSelectedCurrenciesState(selectedCurrencies);
   }
 
   clearAllSubscriptions() {
-    const { selectedCurrencies } = this.state;
+    const { fromCur, toCur } = this.state.selectedCurrencies;
     const subscriptions = this.generateCurrentQuoteSubscriptionsList(
-      selectedCurrencies.fromCur,
-      selectedCurrencies.toCur
+      convertBooleanObjToTrueOnlyArray(fromCur),
+      convertBooleanObjToTrueOnlyArray(toCur)
     );
     this.updateCurrentQuoteSubscriptions(subscriptions, 'remove');
   }
@@ -280,7 +298,15 @@ class App extends Component {
   }
 
   render() {
-    let { current, historical, selectedCurrencies } = this.state;
+    const {
+      currencyMasterlists,
+      data,
+      selectedCurrencies,
+      offline,
+      timestamp,
+    } = this.state;
+    const { current, historical } = data;
+    const { fromCur, toCur } = selectedCurrencies;
 
     return (
       <div className="App">
@@ -291,15 +317,12 @@ class App extends Component {
 
           <div className="App-body">
             <CurrencySelection
-              allCurrencies={allCurrencies}
-              selectedFromCurrencies={selectedCurrencies.fromCur}
-              selectedToCurrencies={selectedCurrencies.toCur}
+              currencyMasterlists={currencyMasterlists}
+              selectedFromCurrencies={fromCur}
+              selectedToCurrencies={toCur}
               updateSelectedCurrencies={this.updateSelectedCurrencies}
             />
-            {this.state.offline &&
-              this.state.timestamp && (
-                <Offline timestamp={this.state.timestamp} />
-              )}
+            {offline && timestamp && <Offline timestamp={timestamp} />}
             <DataDisplay
               selectedCurrencies={selectedCurrencies}
               current={current}
