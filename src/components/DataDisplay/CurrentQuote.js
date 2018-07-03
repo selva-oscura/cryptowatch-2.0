@@ -7,7 +7,7 @@ const CurrentQuote = ({
   cryptoLongName,
   currentPrice,
   priceDir,
-  priceChange,
+  priceChange = '--',
   symbol,
 }) => (
   <div className="CurrentQuote">
@@ -18,8 +18,13 @@ const CurrentQuote = ({
       </div>
       <div className="flex-item">
         <p className="quote-normal">
-          {symbol}
-          {currentPrice}
+          {currentPrice && (
+            <span>
+              {symbol}
+              {currentPrice}
+            </span>
+          )}
+          {!currentPrice && <span className="quote-tiny">Awaiting Update</span>}
         </p>
         <p className="quote-tiny">Current Price</p>
       </div>
@@ -38,9 +43,9 @@ const CurrentQuote = ({
 CurrentQuote.propTypes = {
   cryptoShortName: PropTypes.string.isRequired,
   cryptoLongName: PropTypes.string.isRequired,
-  currentPrice: PropTypes.string.isRequired,
+  currentPrice: PropTypes.string,
   priceDir: PropTypes.string.isRequired,
-  priceChange: PropTypes.string.isRequired,
+  priceChange: PropTypes.string,
   symbol: PropTypes.string.isRequired,
 };
 
