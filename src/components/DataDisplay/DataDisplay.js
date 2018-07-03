@@ -60,29 +60,43 @@ const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
 
   // prepare data for CurrentQuote
   const getCryptoLongName = currencyPair =>
-    currencyAbbreviations.fromCurrencies[current[currencyPair].fromCur];
-  const getCryptoShortName = currencyPair => current[currencyPair].fromCur;
-  const getCurrentPrice = currencyPair =>
-    formatPrice(current[currencyPair].price);
+    currencyAbbreviations.fromCurrencies[
+      currencyPair.slice(0, currencyPair.indexOf('-'))
+    ];
+
+  const getCryptoShortName = currencyPair =>
+    currencyPair.slice(0, currencyPair.indexOf('-'));
+
+  const getCurrentPrice = currencyPair => {
+    return current[currencyPair] && current[currencyPair].price
+      ? formatPrice(current[currencyPair].price)
+      : undefined;
+  };
 
   const getYesterdayClose = currencyPair => {
     return historical && historical[currencyPair]
       ? historical[currencyPair][historical[currencyPair].length - 1].close
-      : null;
+      : undefined;
   };
+
   const calculatePriceChange = currencyPair => {
     let yesterdayClose = getYesterdayClose(currencyPair);
-    let currentPrice = current[currencyPair].price;
+    let currentPrice =
+      current[currencyPair] && current[currencyPair].price
+        ? current[currencyPair].price
+        : undefined;
     return yesterdayClose && currentPrice
       ? (100 * (currentPrice - yesterdayClose)) / yesterdayClose
-      : '--';
+      : undefined;
   };
+
   const getPriceChange = currencyPair => {
     const priceChange = calculatePriceChange(currencyPair);
-    return priceChange === '--'
-      ? priceChange
-      : Math.abs(priceChange).toFixed(3) + '%';
+    return priceChange !== undefined
+      ? Math.abs(priceChange).toFixed(3) + '%'
+      : undefined;
   };
+
   const getPriceDir = currencyPair => {
     const priceChange = calculatePriceChange(currencyPair);
     if (priceChange > 0) {
@@ -93,15 +107,15 @@ const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
     }
     return 'no-change';
   };
+
   const getSymbol = (currencyPair, fromOrTo) => {
-    return symbols &&
-      Object.keys(symbols).length &&
-      current &&
-      currencyPair.length &&
-      current[currencyPair] &&
-      fromOrTo.length
-      ? symbols[current[currencyPair][fromOrTo]]
-      : '';
+    if (symbols && fromOrTo === 'toCur') {
+      return symbols[currencyPair.slice(currencyPair.indexOf('-') + 1)];
+    }
+    if (symbols && fromOrTo === 'fromCur') {
+      return symbols[currencyPair.slice(0, currencyPair.indexOf('-'))];
+    }
+    return '';
   };
 
   return (
@@ -109,17 +123,15 @@ const DataDisplay = ({ selectedCurrencies, current, historical, symbols }) => {
       {selectedCurrencies.display.map((currencyPair, i) => (
         <div className="full" key={selectedCurrencies.display[i]}>
           <div className="m-half s-full">
-            {current[currencyPair] && (
-              <CurrentQuote
-                key={i}
-                cryptoShortName={getCryptoShortName(currencyPair)}
-                cryptoLongName={getCryptoLongName(currencyPair)}
-                currentPrice={getCurrentPrice(currencyPair)}
-                priceDir={getPriceDir(currencyPair)}
-                priceChange={getPriceChange(currencyPair)}
-                symbol={getSymbol(currencyPair, 'toCur')}
-              />
-            )}
+            <CurrentQuote
+              key={i}
+              cryptoShortName={getCryptoShortName(currencyPair)}
+              cryptoLongName={getCryptoLongName(currencyPair)}
+              currentPrice={getCurrentPrice(currencyPair)}
+              priceDir={getPriceDir(currencyPair)}
+              priceChange={getPriceChange(currencyPair)}
+              symbol={getSymbol(currencyPair, 'toCur')}
+            />
           </div>
 
           <div className="m-half s-full">
