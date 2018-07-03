@@ -147,8 +147,8 @@ class App extends Component {
         if (res.LASTUPDATE && res.PRICE && res.FROMSYMBOL && res.TOSYMBOL) {
           // only update state.current if there is a change in price (or if this is first current data received)
           if (
-            current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] === undefined ||
-            current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`].PRICE !== res.PRICE
+            !current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] ||
+            current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`].price !== res.PRICE
           ) {
             current[`${res.FROMSYMBOL}-${res.TOSYMBOL}`] = {
               price: res.PRICE,
@@ -183,21 +183,29 @@ class App extends Component {
 
   updateSelectedCurrenciesState(selectedCurrencies) {
     // use currencyMasterlists as template for ordering display
-    const { currencyMasterlists } = this.state;
+    const { fromCurrencies, toCurrencies } = this.state.currencyMasterlists;
     const display = [];
-    currencyMasterlists.fromCurrencies.forEach(fCur => {
-      fCur = Object.keys(fCur)[0];
-      // check against selected to see if this 'fromCurrency' (crypto) should be displayed and if we should bother looking for toCurrencies for this fromCurrency
-      if (selectedCurrencies.fromCur[fCur]) {
-        currencyMasterlists.toCurrencies.forEach(tCur => {
-          tCur = Object.keys(tCur)[0];
-          // check against selected to see if this 'toCurrency' (real) should be displayed
-          if (selectedCurrencies.toCur[tCur]) {
-            display.push(`${fCur}-${tCur}`);
-          }
-        });
-      }
+    const mapSelectedCurrencies = (masterList, selected) => {
+      return masterList
+        .map(curr => Object.keys(curr)[0])
+        .filter(c => selected[c]);
+    };
+
+    const sortedSelectedFromCurrencies = mapSelectedCurrencies(
+      fromCurrencies,
+      selectedCurrencies.fromCur
+    );
+    const sortedSelectedToCurrencies = mapSelectedCurrencies(
+      toCurrencies,
+      selectedCurrencies.toCur
+    );
+
+    sortedSelectedFromCurrencies.forEach(fCur => {
+      sortedSelectedToCurrencies.forEach(tCur => {
+        display.push(`${fCur}-${tCur}`);
+      });
     });
+
     const state = {
       ...this.state,
       selectedCurrencies: {
