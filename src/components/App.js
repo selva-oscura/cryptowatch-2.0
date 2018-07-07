@@ -107,22 +107,10 @@ class App extends Component {
 
   updateCurrentQuoteSubscriptions(subscriptions, addOrRemove) {
     // get current (current quotes object) in state
-    let current = { ...this.state.data.current };
+    let { current } = this.state.data;
 
     // instantiate socket
     const socket = io.connect('https://streamer.cryptocompare.com/');
-
-    // checking for bad/missing parameters
-    if (!subscriptions || !Array.isArray(subscriptions)) {
-      console.log(
-        'updateCurrentQuoteSubscriptions called with bad/no subscriptions:',
-        subscriptions,
-        'subscriptions.length:',
-        subscriptions.length
-      );
-      // no console.log if !subscriptions.length (this happens whenever there are either no 'to currencies' and/or no 'from currencies' selected)
-      return;
-    }
 
     if (subscriptions.length) {
       if (addOrRemove === 'add') {
